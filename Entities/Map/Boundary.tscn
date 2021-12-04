@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Entities/Map/boundary1.glb" type="PackedScene" id=1]
+[ext_resource path="res://Entities/Map/full_test.glb" type="PackedScene" id=2]
+
+[node name="Boundary" type="Spatial"]
+
+[node name="Boundary" parent="." instance=ExtResource( 1 )]
+visible = false
+
+[node name="full_test" parent="." instance=ExtResource( 2 )]

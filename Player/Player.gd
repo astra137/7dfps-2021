@@ -1,13 +1,11 @@
 extends KinematicBody
 
-const GRAVITY = -24.8
-const MAX_SPEED = 20
-const JUMP_SPEED = 18
-const ACCEL = 4.5
-const DEACCEL= 16
 const MAX_SLOPE_ANGLE = 40
 
-export var MOUSE_SENSITIVITY = 0.05
+export(float) var max_speed := 0.3
+export(float) var acceleration := 4.5
+export(float) var deacceleration := 16.0
+export(float) var mouse_sensitivity = 0.05
 
 var vel = Vector3()
 var dir = Vector3()
@@ -56,8 +54,8 @@ func _input(event):
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 	elif event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-		rotation_helper.rotate_x(deg2rad(event.relative.y * MOUSE_SENSITIVITY * -1))
-		self.rotate_y(deg2rad(event.relative.x * MOUSE_SENSITIVITY * -1))
+		rotation_helper.rotate_x(deg2rad(event.relative.y * mouse_sensitivity * -1))
+		self.rotate_y(deg2rad(event.relative.x * mouse_sensitivity * -1))
 		var camera_rot = rotation_helper.rotation_degrees
 		camera_rot.x = clamp(camera_rot.x, -70, 70)
 		rotation_helper.rotation_degrees = camera_rot
@@ -71,44 +69,35 @@ func _physics_process(delta):
 
 	if is_network_master():
 		if Input.is_action_pressed("movement_forward"):
-			input_movement_vector.y += 1
+			input_movement_vector.z += 1
 		if Input.is_action_pressed("movement_backward"):
-			input_movement_vector.y -= 1
+			input_movement_vector.z -= 1
 		if Input.is_action_pressed("movement_left"):
 			input_movement_vector.x -= 1
 		if Input.is_action_pressed("movement_right"):
 			input_movement_vector.x += 1
+		if Input.is_action_pressed("movement_up"):
+			input_movement_vector.y += 1
+		if Input.is_action_pressed("movement_down"):
+			input_movement_vector.y -= 1
 		input_movement_vector = input_movement_vector.normalized()
 
 	# Basis vectors are already normalized.
-	dir += -cam_xform.basis.z * input_movement_vector.y
+	dir += -cam_xform.basis.z * input_movement_vector.z
 	dir += cam_xform.basis.x * input_movement_vector.x
-	dir.y = 0
+	dir += cam_xform.basis.y * input_movement_vector.y
 	dir = dir.normalized()
 
-	# Jumping
-	if is_network_master():
-		if Input.is_action_just_pressed("movement_jump"):
-			if is_on_floor():
-				vel.y = JUMP_SPEED
-
-	var hvel = vel
-	hvel.y = 0
-
 	var target = dir
-	target *= MAX_SPEED
+	target *= max_speed
 
 	var accel
-	if dir.dot(hvel) > 0:
-		accel = ACCEL
+	if dir.length() > 0:
+		accel = acceleration
 	else:
-		accel = DEACCEL
+		accel = deacceleration
 
-	hvel = hvel.linear_interpolate(target, accel * delta)
-
-	vel.x = hvel.x
-	vel.z = hvel.z
-	vel.y += delta * GRAVITY
+	vel = vel.linear_interpolate(target, accel * delta)
 
 	if is_network_master():
 		rset("puppet_transform_head", rotation_helper.transform)
@@ -118,8 +107,8 @@ func _physics_process(delta):
 		rotation_helper.transform = puppet_transform_head
 		transform = puppet_transform
 		vel = puppet_velocity
-
-	vel = move_and_slide(vel, Vector3(0, 1, 0), 0.05, 4, deg2rad(MAX_SLOPE_ANGLE))
+		
+	move_and_collide(vel)
 
 	# Set the puppet variables with new calculated values,
 	# effectively interpolating until rset() overwrites them.

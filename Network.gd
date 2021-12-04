@@ -3,7 +3,6 @@ extends Node
 const DEFAULT_PORT = 10567
 const MAX_PEERS = 10
 
-var peer = null
 var players_joined = []
 var players_ready = []
 
@@ -16,20 +15,23 @@ signal game_error(what)
 
 func _ready():
 	# warning-ignore:return_value_discarded
-	get_tree().connect("network_peer_connected", self, "_player_connected")
+	multiplayer.connect("network_peer_connected", self, "_player_connected")
 	# warning-ignore:return_value_discarded
-	get_tree().connect("network_peer_disconnected", self,"_player_disconnected")
+	multiplayer.connect("network_peer_disconnected", self,"_player_disconnected")
 	# warning-ignore:return_value_discarded
-	get_tree().connect("connected_to_server", self, "_connected_ok")
+	multiplayer.connect("connected_to_server", self, "_connected_ok")
 	# warning-ignore:return_value_discarded
-	get_tree().connect("connection_failed", self, "_connected_fail")
+	multiplayer.connect("connection_failed", self, "_connected_fail")
 	# warning-ignore:return_value_discarded
-	get_tree().connect("server_disconnected", self, "_server_disconnected")
+	multiplayer.connect("server_disconnected", self, "_server_disconnected")
 
 	# TODO
 	if OS.has_feature("Server"):
 		print("OS.has_feature Server")
-
+	if OS.has_feature("Client"):
+		print("OS.has_feature Client")
+	if OS.get_environment('SERVER'):
+		print("SERVER")
 
 # Callback from SceneTree.
 func _player_connected(id):
@@ -130,13 +132,13 @@ remote func ready_to_start(id):
 		post_start_game()
 
 func host_game():
-	peer = NetworkedMultiplayerENet.new()
+	var peer = NetworkedMultiplayerENet.new()
 	peer.create_server(DEFAULT_PORT, MAX_PEERS)
 	get_tree().set_network_peer(peer)
 	get_tree().refuse_new_network_connections = false
 
 func join_game(address: String):
-	peer = NetworkedMultiplayerENet.new()
+	var peer = NetworkedMultiplayerENet.new()
 	peer.create_client(address, DEFAULT_PORT)
 	get_tree().set_network_peer(peer)
 

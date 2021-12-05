@@ -1,22 +1,24 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Player/Player.gd" type="Script" id=1]
 [ext_resource path="res://Entities/Proob/Proob.tscn" type="PackedScene" id=2]
 
 [sub_resource type="CapsuleShape" id=1]
-radius = 0.25
-height = 0.5
+radius = 0.414593
+height = 0.002
 
 [sub_resource type="CapsuleMesh" id=2]
 radius = 0.25
 mid_height = 0.5
 
-[node name="Player" type="KinematicBody"]
+[sub_resource type="SphereShape" id=3]
+radius = 1.20678
+
+[node name="Player" type="KinematicBody" groups=["player"]]
 script = ExtResource( 1 )
-max_speed = 0.3
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
-transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0.000445962, 0.5, -0.00176948 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.000445962, 1.00183, 0.072936 )
 shape = SubResource( 1 )
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
@@ -35,3 +37,26 @@ far = 8192.0
 
 [node name="Proob" parent="Head" instance=ExtResource( 2 )]
 transform = Transform( -0.2, 0, -3.01992e-08, 0, 0.2, 0, 3.01992e-08, 0, -0.2, 0, 0, 0 )
+
+[node name="StareableArea" type="Area" parent="."]
+collision_layer = 2
+collision_mask = 0
+monitoring = false
+
+[node name="StareableShape" type="CollisionShape" parent="StareableArea"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.01542, 0.0446684 )
+shape = SubResource( 3 )
+
+[node name="Stare" type="RayCast" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.03832, 0 )
+enabled = true
+cast_to = Vector3( 0, 0, -1000 )
+collision_mask = 3
+collide_with_areas = true
+debug_shape_custom_color = Color( 0.909804, 0.482353, 0.482353, 1 )
+
+[node name="StareTimer" type="Timer" parent="."]
+wait_time = 1.75
+one_shot = true
+
+[connection signal="timeout" from="StareTimer" to="." method="_on_StareTimer_timeout"]

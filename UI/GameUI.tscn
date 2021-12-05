@@ -1,0 +1,70 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Font/MainFont.tres" type="DynamicFont" id=1]
+
+[node name="Margin" type="MarginContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 40.0
+margin_top = 40.0
+margin_right = -40.0
+margin_bottom = -40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VerticalElements" type="VBoxContainer" parent="."]
+margin_right = 944.0
+margin_bottom = 520.0
+
+[node name="TopRow" type="HBoxContainer" parent="VerticalElements"]
+margin_right = 944.0
+margin_bottom = 26.0
+
+[node name="LeftPadding" type="MarginContainer" parent="VerticalElements/TopRow"]
+margin_right = 546.0
+margin_bottom = 26.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="StareIndicatorLabel" type="Label" parent="VerticalElements/TopRow"]
+margin_left = 550.0
+margin_right = 713.0
+margin_bottom = 26.0
+custom_fonts/font = ExtResource( 1 )
+text = "Stare Indicator:"
+
+[node name="StareIndicator" type="Label" parent="VerticalElements/TopRow"]
+margin_left = 717.0
+margin_right = 767.0
+margin_bottom = 26.0
+custom_fonts/font = ExtResource( 1 )
+text = "false"
+
+[node name="MarginContainer" type="MarginContainer" parent="VerticalElements/TopRow"]
+margin_left = 771.0
+margin_right = 791.0
+margin_bottom = 26.0
+rect_min_size = Vector2( 20, 0 )
+
+[node name="ScoreLabel" type="Label" parent="VerticalElements/TopRow"]
+margin_left = 795.0
+margin_right = 860.0
+margin_bottom = 26.0
+custom_fonts/font = ExtResource( 1 )
+text = "Score:"
+
+[node name="Score" type="Label" parent="VerticalElements/TopRow"]
+margin_left = 864.0
+margin_right = 944.0
+margin_bottom = 26.0
+rect_min_size = Vector2( 80, 0 )
+custom_fonts/font = ExtResource( 1 )
+text = "0"
+
+[node name="MarginSpace" type="MarginContainer" parent="VerticalElements"]
+margin_top = 30.0
+margin_right = 944.0
+margin_bottom = 520.0
+size_flags_horizontal = 3
+size_flags_vertical = 3

@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://Entities/Map/full_test.glb" type="PackedScene" id=1]
+[ext_resource path="res://UI/GameUI.tscn" type="PackedScene" id=2]
 
 [node name="World" type="Spatial"]
 
@@ -26,3 +27,5 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -38.0748, -11.4496 )
 
 [node name="4" type="Spatial" parent="SpawnPoints"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10.9948, -62.6127 )
+
+[node name="Margin" parent="." instance=ExtResource( 2 )]

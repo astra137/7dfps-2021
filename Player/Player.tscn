@@ -8,6 +8,7 @@
 radius = 0.389534
 
 [sub_resource type="SphereShape" id=3]
+radius = 1.20678
 
 [node name="Player" type="KinematicBody" groups=["player"]]
 script = ExtResource( 1 )
@@ -22,6 +23,14 @@ doppler_tracking = 2
 near = 0.1
 far = 8192.0
 
+[node name="Stare" type="RayCast" parent="Head/Camera"]
+enabled = true
+cast_to = Vector3( 0, 0, -1000 )
+collision_mask = 3
+collide_with_areas = true
+debug_shape_custom_color = Color( 0.909804, 0.482353, 0.482353, 1 )
+debug_shape_thickness = 5.0
+
 [node name="Proob" parent="Head" instance=ExtResource( 2 )]
 transform = Transform( -0.2, 0, -3.01992e-08, 0, 0.2, 0, 3.01992e-08, 0, -0.2, 0, 0, -0.08 )
 
@@ -33,18 +42,11 @@ monitoring = false
 [node name="StareableShape" type="CollisionShape" parent="StareableArea"]
 shape = SubResource( 3 )
 
-[node name="Stare" type="RayCast" parent="."]
-enabled = true
-cast_to = Vector3( 0, 0, -1000 )
-collision_mask = 3
-collide_with_areas = true
-debug_shape_custom_color = Color( 0.909804, 0.482353, 0.482353, 1 )
-
 [node name="StareTimer" type="Timer" parent="."]
 wait_time = 1.75
 one_shot = true
 
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+[node name="StareCountdownSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 3 )
 
 [connection signal="timeout" from="StareTimer" to="." method="_on_StareTimer_timeout"]

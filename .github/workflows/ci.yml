@@ -49,6 +49,8 @@ jobs:
     steps:
       - name: Cloning repo
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Push to Dokku
         uses: dokku/github-action@v1.0.1

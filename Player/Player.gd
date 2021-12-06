@@ -17,6 +17,7 @@ export(float, 0.0, 20.0) var deacceleration := 16.0
 export(float, 0.0, 0.5) var mouse_sensitivity := 0.05
 export(int, 0, 1000) var initial_burst_score := 500
 export(float, 0.0, 500.0) var delta_score_rate := 80.0
+export(float, 0.0, 90.0) var stare_angle_tolerance := 40.0
 
 var vel = Vector3()
 var dir = Vector3()
@@ -29,11 +30,15 @@ onready var hide_the_body: Spatial = $Head/Proob
 onready var stare: RayCast = $Head/Camera/Stare
 onready var score_label: Label = get_tree().get_root().get_node("World/Margin/VerticalElements/TopRow/Score")
 onready var stare_indicator: Label = get_tree().get_root().get_node("World/Margin/VerticalElements/TopRow/StareIndicator")
+onready var viewable_indicator: Label = get_tree().get_root().get_node("World/Margin/VerticalElements/TopRow/ViewableIndicator")
+onready var stareable_indicator: Label = get_tree().get_root().get_node("World/Margin/VerticalElements/TopRow/StareableIndicator")
+onready var stare_sound: AudioStreamPlayer = $StareCountdownSound
 onready var stare_timer: Timer = $StareTimer
 
 puppet var puppet_transform: Transform
 puppet var puppet_transform_head: Transform
 puppet var puppet_velocity: Vector3
+
 
 
 func _ready():
@@ -46,9 +51,11 @@ func _ready():
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
+
 func _exit_tree():
 	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+
 
 
 func _notification(what):
@@ -56,6 +63,7 @@ func _notification(what):
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	elif what == MainLoop.NOTIFICATION_WM_FOCUS_OUT:
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+
 
 
 func _input(event):
@@ -76,6 +84,7 @@ func _input(event):
 		var camera_rot = rotation_helper.rotation_degrees
 		camera_rot.x = clamp(camera_rot.x, -70, 70)
 		rotation_helper.rotation_degrees = camera_rot
+
 
 
 func _physics_process(delta):
@@ -125,7 +134,7 @@ func _physics_process(delta):
 		transform = puppet_transform
 		vel = puppet_velocity
 
-	vel = move_and_slide(vel, Vector3(0, 0, 0), 0.05, 4, deg2rad(MAX_SLOPE_ANGLE))
+	vel = move_and_slide(vel, Vector3.ZERO, 0.05, 4, deg2rad(MAX_SLOPE_ANGLE))
 
 	# Set the puppet variables with new calculated values,
 	# effectively interpolating until remotely overwritten.
@@ -136,8 +145,33 @@ func _physics_process(delta):
 	if is_network_master():
 		process_stare(delta)
 
+
+
 # Handles staring mechanics. Function can only be ran on a master node.
 master func process_stare(delta):
+	# We need to raycast to every player to determine which ones are currently viewable (not behind an obstacle)
+	var players = get_tree().get_nodes_in_group("player")
+	players.remove(players.find(self))
+
+	# We need the space state in order to raycast to each player
+	var space_state = get_world().get_direct_space_state()
+	var viewable_players := ""
+	var stareable_players := ""
+	var raycast_from = global_transform.xform(Vector3.ZERO)
+	for p in players:
+		var raycast_to = p.global_transform.xform(Vector3.ZERO)
+		var intersect = space_state.intersect_ray(raycast_from, raycast_to)
+		
+		# If the player is viewable the raycast will collide with it
+		if intersect and !intersect.empty() and p == intersect.collider:
+			viewable_players += str(Helpers.get_player_id(p)) + ", "
+			# We want to calculate the angle between the direction to the other player and the direction of where the camera is facing
+			var player_direction = camera.global_transform.xform_inv(raycast_to)
+			if player_direction.angle_to(Vector3(0, 0, -1)) <= (stare_angle_tolerance * PI/180):
+				stareable_players += str(Helpers.get_player_id(p)) + ", "
+	viewable_indicator.text = viewable_players
+	stareable_indicator.text = stareable_players
+	
 	# 2 is the collision layer for stareable areas
 	if stare.is_colliding() and stare.get_collider().get_collision_layer_bit(1):
 		match state:
@@ -158,6 +192,7 @@ master func process_stare(delta):
 		match state:
 			PlayerState.STARING_COUNTDOWN, PlayerState.STARING_PERSISTENT, PlayerState.INTERRUPTED:
 				stare_timer.stop()
+				stare_sound.stop()
 				state = PlayerState.IDLE
 				print("Idle")
 
@@ -167,12 +202,7 @@ master func process_stare(delta):
 					other_player.rpc_id(staring_at, "not_being_stared")
 				staring_at = 0
 
-# Receive burst points and switch to points over time
-func _on_StareTimer_timeout():
-	if state == PlayerState.STARING_COUNTDOWN:
-		inc_score(initial_burst_score)
-		state = PlayerState.STARING_PERSISTENT
-		print("Staring Persistent")
+
 
 # Increases the score and sets it
 func inc_score(amount: int):
@@ -180,27 +210,40 @@ func inc_score(amount: int):
 	rset("score", score)
 	score_label.text = str(score)
 
+
+
 # Remotely called when your object is being stared at
 master func being_stared():
 	if stare_indicator.text == str(false):
-		$AudioStreamPlayer.pitch_scale = 1.75
-		$AudioStreamPlayer.play()
+		stare_sound.pitch_scale = 1.75
+		stare_sound.play()
 	stare_indicator.text = str(true)
 	match state:
 		PlayerState.STARING_COUNTDOWN, PlayerState.STARING_PERSISTENT:
 			var sending_id = get_tree().get_rpc_sender_id()
 			if sending_id == staring_at:
 				stare_timer.stop()
+				stare_sound.stop()
 				state = PlayerState.INTERRUPTED
 				print("Interrupted")
-				$AudioStreamPlayer.stop()
+
+
 
 # Remotely called when someone stops staring at you
 master func not_being_stared():
-	$AudioStreamPlayer.stop()
+	stare_sound.stop()
 	var sending_id = get_tree().get_rpc_sender_id()
 	stare_indicator.text = str(false)
 	match state:
 		PlayerState.INTERRUPTED:
 			if sending_id == staring_at:
 				state = PlayerState.IDLE
+
+
+
+# Receive burst points and switch to points over time
+func _on_StareTimer_timeout():
+	if state == PlayerState.STARING_COUNTDOWN:
+		inc_score(initial_burst_score)
+		state = PlayerState.STARING_PERSISTENT
+		print("Staring Persistent")

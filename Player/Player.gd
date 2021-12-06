@@ -182,6 +182,9 @@ func inc_score(amount: int):
 
 # Remotely called when your object is being stared at
 master func being_stared():
+	if stare_indicator.text == str(false):
+		$AudioStreamPlayer.pitch_scale = 1.75
+		$AudioStreamPlayer.play()
 	stare_indicator.text = str(true)
 	match state:
 		PlayerState.STARING_COUNTDOWN, PlayerState.STARING_PERSISTENT:
@@ -190,9 +193,11 @@ master func being_stared():
 				stare_timer.stop()
 				state = PlayerState.INTERRUPTED
 				print("Interrupted")
+				$AudioStreamPlayer.stop()
 
 # Remotely called when someone stops staring at you
 master func not_being_stared():
+	$AudioStreamPlayer.stop()
 	var sending_id = get_tree().get_rpc_sender_id()
 	stare_indicator.text = str(false)
 	match state:

@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Player/Player.gd" type="Script" id=1]
 [ext_resource path="res://Entities/Proob/Proob.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Player/Spotting Warning.wav" type="AudioStream" id=3]
 
 [sub_resource type="SphereShape" id=4]
 radius = 0.389534
@@ -42,5 +43,8 @@ debug_shape_custom_color = Color( 0.909804, 0.482353, 0.482353, 1 )
 [node name="StareTimer" type="Timer" parent="."]
 wait_time = 1.75
 one_shot = true
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 3 )
 
 [connection signal="timeout" from="StareTimer" to="." method="_on_StareTimer_timeout"]

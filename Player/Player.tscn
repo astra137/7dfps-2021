@@ -22,7 +22,7 @@ near = 0.1
 far = 8192.0
 
 [node name="Proob" parent="Head" instance=ExtResource( 2 )]
-transform = Transform( -0.2, 0, -3.01992e-08, 0, 0.2, 0, 3.01992e-08, 0, -0.2, 0, 0, -0.1 )
+transform = Transform( -0.2, 0, -3.01992e-08, 0, 0.2, 0, 3.01992e-08, 0, -0.2, 0, 0, -0.08 )
 
 [node name="StareableArea" type="Area" parent="."]
 collision_layer = 2
@@ -30,7 +30,6 @@ collision_mask = 0
 monitoring = false
 
 [node name="StareableShape" type="CollisionShape" parent="StareableArea"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01542, 0.0446684 )
 shape = SubResource( 3 )
 
 [node name="Stare" type="RayCast" parent="."]

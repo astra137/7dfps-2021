@@ -3,7 +3,7 @@ extends Node
 const DEFAULT_PORT := 10567
 const MAX_PEERS := 10
 
-signal disconnected()
+signal disconnected(errmsg)
 
 var world_scene = preload("res://Entities/World.tscn")
 var player_scene = preload("res://Player/Player.tscn")
@@ -52,7 +52,7 @@ remotesync func player_join(player_id: int):
 	world.get_node("Players").add_child(player)
 
 
-remote func player_start(player_id: int):
+remotesync func player_start(player_id: int):
 	var sender_id = multiplayer.get_rpc_sender_id()
 	assert(sender_id == 1)
 	print("player_start ", player_id)
@@ -85,10 +85,10 @@ func _network_peer_connected(id):
 	print("_network_peer_connected ", id)
 	if multiplayer.is_network_server():
 		for player_id in players:
-			rpc_id(id, "player_join", player_id)
-		players.append(id)
-		rpc("player_join", id)
-		rpc_id(id, "player_start")
+			rpc_id(id, "player_join", player_id) # Send existing players to new one
+		players.append(id) # Assume all new connections are players
+		rpc("player_join", id) # Add player for ALL peers
+		rpc_id(id, "player_start", id) # Unpause the new player AND server copy
 
 
 func _network_peer_disconnected(id):
@@ -104,11 +104,9 @@ func _connected_to_server():
 
 func _connection_failed():
 	print("_connection_failed")
-	get_tree().set_network_peer(null)
-	emit_signal("disconnected")
+	quit_game()
 
 
 func _server_disconnected():
 	print("_server_disconnected")
 	quit_game()
-	emit_signal("disconnected")

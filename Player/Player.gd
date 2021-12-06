@@ -11,7 +11,7 @@ var state: int = PlayerState.IDLE
 
 const MAX_SLOPE_ANGLE = 40
 
-export(float, 0.0, 1.0) var max_speed := 0.3
+export(float, 0.0, 1.0) var max_speed := 18.0
 export(float, 0.0, 20.0) var acceleration := 4.5
 export(float, 0.0, 20.0) var deacceleration := 16.0
 export(float, 0.0, 0.5) var mouse_sensitivity := 0.05
@@ -20,7 +20,7 @@ export(float, 0.0, 500.0) var delta_score_rate := 80.0
 
 var vel = Vector3()
 var dir = Vector3()
-var score := 0
+puppet var score := 0
 var staring_at := 0
 
 onready var camera: Camera = $Head/Camera
@@ -124,20 +124,20 @@ func _physics_process(delta):
 		rotation_helper.transform = puppet_transform_head
 		transform = puppet_transform
 		vel = puppet_velocity
-		
-	move_and_collide(vel)
+
+	vel = move_and_slide(vel, Vector3(0, 0, 0), 0.05, 4, deg2rad(MAX_SLOPE_ANGLE))
 
 	# Set the puppet variables with new calculated values,
-	# effectively interpolating until rset() overwrites them.
+	# effectively interpolating until remotely overwritten.
 	if not is_network_master():
 		puppet_transform = transform
 		puppet_velocity = vel
-	
+
 	if is_network_master():
-		stare(delta)
+		process_stare(delta)
 
 # Handles staring mechanics. Function can only be ran on a master node.
-master func stare(delta):
+master func process_stare(delta):
 	# 2 is the collision layer for stareable areas
 	if stare.is_colliding() and stare.get_collider().get_collision_layer_bit(1):
 		match state:
@@ -146,13 +146,13 @@ master func stare(delta):
 				state = PlayerState.STARING_COUNTDOWN
 				print("Staring Countdown")
 			PlayerState.STARING_PERSISTENT:
-				score(delta_score_rate * delta)
-		
+				inc_score(delta_score_rate * delta)
+
 		# Regardless of the state we need to make an rpc on the entity we're staring at
 		staring_at = Helpers.get_player_id(stare.get_collider())
 		var other_player = Helpers.get_player_node_by_id(staring_at)
 		if other_player and other_player.has_method("being_stared"):
-			other_player.rpc("being_stared")
+			other_player.rpc_id(staring_at, "being_stared")
 	# If you are no longer staring at someone then stop scoring
 	else:
 		match state:
@@ -160,22 +160,22 @@ master func stare(delta):
 				stare_timer.stop()
 				state = PlayerState.IDLE
 				print("Idle")
-				
+
 				# Letting other player know that we are done staring at them
 				var other_player = Helpers.get_player_node_by_id(staring_at)
 				if other_player and other_player.has_method("not_being_stared"):
-					other_player.rpc("not_being_stared")
+					other_player.rpc_id(staring_at, "not_being_stared")
 				staring_at = 0
 
 # Receive burst points and switch to points over time
 func _on_StareTimer_timeout():
 	if state == PlayerState.STARING_COUNTDOWN:
-		score(initial_burst_score)
+		inc_score(initial_burst_score)
 		state = PlayerState.STARING_PERSISTENT
 		print("Staring Persistent")
 
 # Increases the score and sets it
-func score(amount: int):
+func inc_score(amount: int):
 	score += amount
 	rset("score", score)
 	score_label.text = str(score)

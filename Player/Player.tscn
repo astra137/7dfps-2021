@@ -9,6 +9,7 @@ radius = 0.389534
 
 [node name="Player" type="KinematicBody" groups=["player"]]
 script = ExtResource( 1 )
+stare_angle_tolerance = 13.0
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
 shape = SubResource( 4 )

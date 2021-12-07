@@ -25,7 +25,7 @@ var stared_by := []
 
 onready var camera: Camera = $Head/Camera
 onready var rotation_helper: Spatial = $Head
-onready var hide_the_body: Spatial = $Head/Proob
+onready var hide_the_body: Spatial = $Head/proob
 onready var score_label: Label = get_tree().get_root().get_node("World/Margin/VerticalElements/TopRow/Score")
 onready var stare_indicator: Label = get_tree().get_root().get_node("World/Margin/VerticalElements/TopRow/StareIndicator")
 onready var staring_at_label: Label = get_tree().get_root().get_node("World/Margin/VerticalElements/TopRow/StaringAt")
@@ -159,19 +159,19 @@ master func process_stare(delta):
 	for player in players:
 		var raycast_to = player.global_transform.xform(Vector3.ZERO)
 		var intersect = space_state.intersect_ray(raycast_from, raycast_to)
-		
+
 		# If the player is viewable the raycast will collide with it
 		if intersect and !intersect.empty() and player == intersect.collider:
 			# We want to calculate the angle between the direction to the other player and the direction of where the camera is facing
 			var player_direction = camera.global_transform.xform_inv(raycast_to)
 			if player_direction.angle_to(Vector3(0, 0, -1)) <= (stare_angle_tolerance * PI/180):
 				staring_at_temp.append(player)
-				
+
 				# Regardless of the state we need to make an rpc on the entity we're staring at
 				if not staring_at.has(player):
 					if player.has_method("being_stared"):
 						player.rpc_id(Helpers.get_player_id(player), "being_stared")
-	
+
 	# If we stop staring at someone we were previously staring at we will send them a little message ;)
 	for player in staring_at:
 		if not staring_at_temp.has(player):
@@ -181,21 +181,21 @@ master func process_stare(delta):
 			# If we stop staring at someone who's staring at us then we play the sound
 			if stared_by.has(player):
 				player.get_node("StareCountdownSound").play()
-	
+
 	# Setting the values for who we're staring at
 	staring_at = [] + staring_at_temp
-	
+
 	# We are removing players who are staring at us so we only get the players that we are staring at
 	for p in stared_by:
 		if staring_at_temp.has(p):
 			staring_at_temp.remove(staring_at_temp.find(p))
 			p.get_node("StareCountdownSound").stop()
-	
+
 	for p in staring_at_temp:
 		staring_at_text += str(Helpers.get_player_id(p)) + ", "
-	
+
 	staring_at_label.text = staring_at_text
-	
+
 	if not staring_at_temp.empty():
 		match state:
 			PlayerState.IDLE:
@@ -247,7 +247,7 @@ func _on_StareTimer_timeout():
 		for p in stared_by:
 			if staring_at_temp.has(p):
 				staring_at_temp.remove(staring_at_temp.find(p))
-				
+
 		inc_score(initial_burst_score * staring_at_temp.size())
 		state = PlayerState.STARING_PERSISTENT
 		print("Staring Persistent")

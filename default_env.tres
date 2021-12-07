@@ -5,3 +5,10 @@
 [resource]
 background_mode = 2
 background_sky = SubResource( 1 )
+background_color = Color( 1, 1, 1, 1 )
+fog_color = Color( 0.678431, 0.678431, 0.678431, 1 )
+fog_depth_begin = 237.8
+glow_bloom = 0.1
+glow_blend_mode = 1
+glow_bicubic_upscale = true
+glow_high_quality = true

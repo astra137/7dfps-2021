@@ -7,7 +7,7 @@ func get_player_id(node: Node):
 		if temp.is_in_group("player"):
 			return int(temp.name)
 		temp = temp.get_parent()
-		
+
 	return -1
 
 # Gets the node for a player with a given id

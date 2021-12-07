@@ -178,6 +178,9 @@ master func process_stare(delta):
 			# Letting other player know that we are done staring at them
 			if player.has_method("not_being_stared"):
 				player.rpc_id(Helpers.get_player_id(player), "not_being_stared")
+			# If we stop staring at someone who's staring at us then we play the sound
+			if stared_by.has(player):
+				player.get_node("StareCountdownSound").play()
 	
 	# Setting the values for who we're staring at
 	staring_at = [] + staring_at_temp
@@ -186,6 +189,7 @@ master func process_stare(delta):
 	for p in stared_by:
 		if staring_at_temp.has(p):
 			staring_at_temp.remove(staring_at_temp.find(p))
+			p.get_node("StareCountdownSound").stop()
 	
 	for p in staring_at_temp:
 		staring_at_text += str(Helpers.get_player_id(p)) + ", "
@@ -220,23 +224,19 @@ func inc_score(amount: int):
 
 # Remotely called when your object is being stared at
 master func being_stared():
-	if stare_indicator.text == str(false):
-		stare_sound.pitch_scale = 1.75
-		stare_sound.play()
-	stare_indicator.text = str(true)
 	var sender = Helpers.get_player_node_by_id(get_tree().get_rpc_sender_id())
 	if not stared_by.has(sender):
 		stared_by.append(sender)
+		sender.get_node("StareCountdownSound").play()
 
 
 
 # Remotely called when someone stops staring at you
 master func not_being_stared():
-	stare_sound.stop()
-	stare_indicator.text = str(false)
 	var sending = Helpers.get_player_node_by_id(get_tree().get_rpc_sender_id())
 	if stared_by.has(sending):
 		stared_by.remove(stared_by.find(sending))
+		sending.get_node("StareCountdownSound").stop()
 
 
 

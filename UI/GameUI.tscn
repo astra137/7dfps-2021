@@ -22,44 +22,25 @@ margin_right = 944.0
 margin_bottom = 26.0
 
 [node name="LeftPadding" type="MarginContainer" parent="VerticalElements/TopRow"]
-margin_right = 518.0
+margin_right = 647.0
 margin_bottom = 26.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Stareable" type="Label" parent="VerticalElements/TopRow"]
-margin_left = 522.0
-margin_right = 628.0
-margin_bottom = 26.0
-custom_fonts/font = ExtResource( 1 )
-text = "Stareable:"
-
-[node name="StareableIndicator" type="Label" parent="VerticalElements/TopRow"]
-margin_left = 632.0
-margin_right = 632.0
-margin_bottom = 26.0
-custom_fonts/font = ExtResource( 1 )
-
-[node name="MarginContainer3" type="MarginContainer" parent="VerticalElements/TopRow"]
-margin_left = 636.0
-margin_right = 656.0
-margin_bottom = 26.0
-rect_min_size = Vector2( 20, 0 )
-
-[node name="Viewable" type="Label" parent="VerticalElements/TopRow"]
-margin_left = 660.0
+[node name="StaringAtLabel" type="Label" parent="VerticalElements/TopRow"]
+margin_left = 651.0
 margin_right = 763.0
 margin_bottom = 26.0
 custom_fonts/font = ExtResource( 1 )
-text = "Viewable:"
+text = "Staring At:"
 
-[node name="ViewableIndicator" type="Label" parent="VerticalElements/TopRow"]
+[node name="StaringAt" type="Label" parent="VerticalElements/TopRow"]
 margin_left = 767.0
 margin_right = 767.0
 margin_bottom = 26.0
 custom_fonts/font = ExtResource( 1 )
 
-[node name="MarginContainer2" type="MarginContainer" parent="VerticalElements/TopRow"]
+[node name="MarginContainer3" type="MarginContainer" parent="VerticalElements/TopRow"]
 visible = false
 margin_left = 747.0
 margin_right = 767.0

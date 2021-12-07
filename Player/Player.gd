@@ -26,7 +26,6 @@ var stared_by := []
 onready var camera: Camera = $Head/Camera
 onready var rotation_helper: Spatial = $Head
 onready var hide_the_body: Spatial = $Head/Proob
-onready var stare: RayCast = $Head/Camera/Stare
 onready var score_label: Label = get_tree().get_root().get_node("World/Margin/VerticalElements/TopRow/Score")
 onready var stare_indicator: Label = get_tree().get_root().get_node("World/Margin/VerticalElements/TopRow/StareIndicator")
 onready var staring_at_label: Label = get_tree().get_root().get_node("World/Margin/VerticalElements/TopRow/StaringAt")

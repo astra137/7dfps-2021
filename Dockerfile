@@ -10,9 +10,7 @@ RUN godot --path /build --export-pack Docker game.pck
 FROM godot-server as app
 LABEL org.opencontainers.image.source=https://github.com/astra137/7dfps-2021
 EXPOSE 10567/udp
-VOLUME [ "/data" ]
 RUN apk add --no-cache tini
 COPY --from=build /build/game.pck /app/
-WORKDIR /data
 CMD [ "godot", "--main-pack", "/app/game.pck" ]
 ENTRYPOINT [ "tini", "--" ]

@@ -1,0 +1,15 @@
+kind: pipeline
+type: exec
+name: deploy
+
+platform:
+  os: linux
+  arch: amd64
+
+clone:
+  disable: true
+
+steps:
+  - name: update-dokku
+    commands:
+      - ssh dokku@localhost -p 3022 -x "git:sync --build 7dfps https://github.com/astra137/7dfps-2021 main"

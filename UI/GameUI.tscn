@@ -107,7 +107,7 @@ margin_bottom = 26.0
 [node name="Label" type="Label" parent="ScoreboardBackground/ScoreboardMargin/Scoreboard/VictorArea/Victor"]
 margin_right = 69.0
 margin_bottom = 26.0
-text = "Victor:"
+text = "Victor: "
 
 [node name="Name" type="Label" parent="ScoreboardBackground/ScoreboardMargin/Scoreboard/VictorArea/Victor"]
 margin_left = 73.0

@@ -35,16 +35,11 @@ master func end_round():
 	# Find victor
 	var victor = get_highest_scoring_player(player_scores)
 	
-	# Disable movement
-	
-	# Show scoreboard
-	score_board.visible = true
-	
-	# Show victor label
-	victor_area.visible = true
-	victor_area.get_node("Victor/Name").text = str(victor[0])
-	
-	# Remotely show scoreboard and label
+	# Let players know the round is over
+	var players = get_tree().get_nodes_in_group("player")
+	for player in players:
+		if player.has_method("round_ended"):
+			player.rpc_id(Helpers.get_player_id(player), "round_ended", str(victor[0]))
 	
 	# Stop round timer and start post round timer
 	round_timer.stop()
@@ -53,36 +48,27 @@ master func end_round():
 
 
 func _on_PostRoundTimer_timeout():
-	# Reset scores
-	rset("player_scores", [])
-	var players = get_tree().get_nodes_in_group("player")
-	for player in players:
-		player.rset("score", 0)
-		# Remotely change score progress bar
-	
-	# Move players to spawn points
-	# We have to get vector coordinates for each of the spawn points
-	var spawn_points := []
-	for point in $SpawnPoints.get_children():
-		spawn_points.append(point.to_global(Vector3.ZERO))
-	spawn_points.shuffle()
-	
-	var rng = RandomNumberGenerator.new()
-	for player in players:
-		var index = rng.randi_range(0, spawn_points.size())
-		player.translate(spawn_points.pop_at(index))
+	if is_network_master():
+		# Reset scores
+		rset("player_scores", [])
+		var players = get_tree().get_nodes_in_group("player")
+		for player in players:
+			# Don't comment or remove this please, it is actually a workaround for resetting rounds
+			player.rset("score", 0)
 		
-	# Hide victor label
-	victor_area.visible = false
-	victor_area.get_node("Victor/Name").text = ""
-	
-	# Hide scoreboard
-	score_board.visible = false
-	
-	# Remotely hide scoreboard
-	
-	# Start round timer
-	round_timer.start()
-	post_round_timer.stop()
-	
-	# Enable movement
+		# Move players to spawn points
+		# We have to get vector coordinates for each of the spawn points
+		var spawn_points := []
+		for point in $SpawnPoints.get_children():
+			spawn_points.append(point.to_global(Vector3.ZERO))
+		spawn_points.shuffle()
+		
+		var rng = RandomNumberGenerator.new()
+		for player in players:
+			var index = rng.randi_range(0, spawn_points.size())
+			if player.has_method("respawn"):
+				player.rpc_id(Helpers.get_player_id(player), "respawn", spawn_points.pop_at(index))
+		
+		# Start round timer
+		round_timer.start()
+		post_round_timer.stop()

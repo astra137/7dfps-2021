@@ -27,6 +27,8 @@ onready var camera: Camera = $Head/Camera
 onready var rotation_helper: Spatial = $Head
 onready var hide_the_body: Spatial = $Head/proob
 onready var score_bar: ProgressBar = get_tree().get_root().get_node("World/GameUI/VerticalElements/TopRow/ScoreElements/Score")
+onready var score_board := get_tree().get_root().get_node("World/GameUI/ScoreboardBackground")
+onready var victor_area := get_tree().get_root().get_node("World/GameUI/ScoreboardBackground/ScoreboardMargin/Scoreboard/VictorArea")
 onready var stare_sound: AudioStreamPlayer = $StareCountdownSound
 onready var stare_timer: Timer = $StareTimer
 
@@ -243,3 +245,31 @@ func _on_StareTimer_timeout():
 		inc_score(initial_burst_score * staring_at_temp.size())
 		state = PlayerState.STARING_PERSISTENT
 		print("Staring Persistent")
+
+master func respawn(to: Vector3):
+	# Move player
+	transform.origin = to
+	
+	# Reset score
+	inc_score(-score)
+	
+	# Hide victor label
+	victor_area.visible = false
+	victor_area.get_node("Victor/Name").text = ""
+	
+	# Hide scoreboard
+	score_board.visible = false
+	
+	# Enable movement
+	pass
+	
+master func round_ended(victor: String):
+	# Disable movement
+	pass
+	
+	# Show scoreboard
+	score_board.visible = true
+	
+	# Show victor label
+	victor_area.visible = true
+	victor_area.get_node("Victor/Name").text = victor

@@ -26,15 +26,14 @@ var stared_by := []
 onready var camera: Camera = $Head/Camera
 onready var rotation_helper: Spatial = $Head
 onready var hide_the_body: Spatial = $Head/proob
-onready var score_label: Label = get_tree().get_root().get_node("World/Margin/VerticalElements/TopRow/Score")
-onready var staring_at_label: Label = get_tree().get_root().get_node("World/Margin/VerticalElements/TopRow/StaringAt")
+onready var score_bar: ProgressBar = get_tree().get_root().get_node("World/GameUI/VerticalElements/TopRow/ScoreElements/Score")
 onready var stare_sound: AudioStreamPlayer = $StareCountdownSound
 onready var stare_timer: Timer = $StareTimer
 
 puppet var puppet_transform: Transform
 puppet var puppet_transform_head: Transform
 puppet var puppet_velocity: Vector3
-puppet var score := 0
+remotesync var score := 0
 
 
 
@@ -153,7 +152,6 @@ master func process_stare(delta):
 	# We need the space state in order to raycast to each player
 	var space_state = get_world().get_direct_space_state()
 	var staring_at_temp := []
-	var staring_at_text := ""
 	var raycast_from = global_transform.xform(Vector3.ZERO)
 	for player in players:
 		var raycast_to = player.global_transform.xform(Vector3.ZERO)
@@ -190,11 +188,6 @@ master func process_stare(delta):
 			staring_at_temp.remove(staring_at_temp.find(p))
 			p.get_node("StareCountdownSound").stop()
 
-	for p in staring_at_temp:
-		staring_at_text += str(Helpers.get_player_id(p)) + ", "
-
-	staring_at_label.text = staring_at_text
-
 	if not staring_at_temp.empty():
 		match state:
 			PlayerState.IDLE:
@@ -217,7 +210,7 @@ master func process_stare(delta):
 func inc_score(amount: int):
 	score += amount
 	rset("score", score)
-	score_label.text = str(score)
+	score_bar.value = score
 
 
 

@@ -1,0 +1,25 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://UI/Theme/ui_theme.tres" type="Theme" id=1]
+
+[node name="Row" type="HBoxContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Name" type="Label" parent="."]
+margin_top = 287.0
+margin_right = 200.0
+margin_bottom = 313.0
+rect_min_size = Vector2( 200, 0 )
+text = "Test"
+
+[node name="Score" type="Label" parent="."]
+margin_left = 204.0
+margin_top = 287.0
+margin_right = 264.0
+margin_bottom = 313.0
+text = "Score"

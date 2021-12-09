@@ -106,8 +106,13 @@ func _ready():
 # 		rotation_helper.rotation_degrees = camera_rot
 
 func _process(_delta):
+	if multiplayer.is_network_server():
+		rset_unreliable("vel", vel)
+		rset_unreliable("transform", transform)
+		$Head.rset_unreliable("transform", $Head.transform)
 	if get_is_me():
 		score_bar.value = score
+
 
 func _physics_process(delta):
 	rotation_degrees.y = $Control.look_yaw
@@ -152,10 +157,6 @@ func _physics_process(delta):
 	if multiplayer.is_network_server():
 		process_stare(delta)
 
-		rset_unreliable("vel", vel)
-		rset_unreliable("transform", transform)
-		$Head.rset_unreliable("transform", $Head.transform)
-
 
 # Handles staring mechanics.
 func process_stare(delta):
@@ -191,7 +192,7 @@ func process_stare(delta):
 				player.rpc("not_being_stared", Helpers.get_player_id(self))
 			# If we stop staring at someone who's staring at us then we play the sound
 			if stared_by.has(player):
-				player.rpc("being_stared", Helpers.get_player_id(self))
+				rpc("being_stared", Helpers.get_player_id(player))
 
 
 	# Setting the values for who we're staring at
@@ -201,7 +202,7 @@ func process_stare(delta):
 	for p in stared_by:
 		if staring_at_temp.has(p):
 			staring_at_temp.remove(staring_at_temp.find(p))
-			p.rpc("not_being_stared", Helpers.get_player_id(self))
+			rpc("not_being_stared", Helpers.get_player_id(p))
 
 	if not staring_at_temp.empty():
 		match state:

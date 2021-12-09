@@ -7,7 +7,7 @@ onready var round_timer: Timer = $RoundTimer
 onready var score_board := $GameUI/ScoreboardBackground
 onready var victor_area := $GameUI/ScoreboardBackground/ScoreboardMargin/Scoreboard/VictorArea
 
-
+var rng := RandomNumberGenerator.new()
 remotesync var player_scores := []
 
 func get_highest_scoring_player(scores):
@@ -16,6 +16,9 @@ func get_highest_scoring_player(scores):
 		if not highest or highest[1] < score[1]:
 			highest = score
 	return highest
+	
+func _ready():
+	rng.randomize()
 
 func _process(_delta):
 	if is_network_master():
@@ -63,7 +66,6 @@ func _on_PostRoundTimer_timeout():
 			spawn_points.append(point.to_global(Vector3.ZERO))
 		spawn_points.shuffle()
 		
-		var rng = RandomNumberGenerator.new()
 		for player in players:
 			var index = rng.randi_range(0, spawn_points.size())
 			if player.has_method("respawn"):

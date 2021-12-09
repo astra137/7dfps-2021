@@ -11,6 +11,7 @@ var player_scene = preload("res://Player/Player.tscn")
 var world
 var peer
 var players = []
+var rng := RandomNumberGenerator.new()
 
 
 func host_game(local_player: bool):
@@ -49,6 +50,14 @@ remotesync func player_join(player_id: int):
 	player.set_name(str(player_id))
 	player.set_network_master(player_id)
 	player.set_process(false)
+	
+	# Move players to spawn points
+	# We have to get vector coordinates for each of the spawn points
+	var spawn_points := []
+	for point in world.get_node("SpawnPoints").get_children():
+		spawn_points.append(point.to_global(Vector3.ZERO))
+	
+	player.transform.origin = spawn_points[rng.randi_range(0, spawn_points.size())]
 	world.get_node("Players").add_child(player)
 
 
@@ -79,6 +88,7 @@ func _ready():
 	multiplayer.connect("connection_failed", self, "_connection_failed")
 	# warning-ignore:return_value_discarded
 	multiplayer.connect("server_disconnected", self, "_server_disconnected")
+	rng.randomize()
 
 
 func _network_peer_connected(id):

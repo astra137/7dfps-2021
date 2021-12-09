@@ -9,7 +9,7 @@ radius = 0.4
 
 [node name="Player" type="KinematicBody" groups=["player"]]
 script = ExtResource( 1 )
-delta_score_rate = 300.0
+delta_score_rate = 200.0
 stare_angle_tolerance = 13.0
 
 [node name="CollisionShape" type="CollisionShape" parent="."]

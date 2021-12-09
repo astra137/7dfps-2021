@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Player/Player.gd" type="Script" id=1]
 [ext_resource path="res://Entities/Proob/proob.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Player/Spotting Warning.wav" type="AudioStream" id=3]
+[ext_resource path="res://Player/Soul.tscn" type="PackedScene" id=4]
 
 [sub_resource type="SphereShape" id=4]
 radius = 0.4
@@ -12,12 +13,15 @@ script = ExtResource( 1 )
 delta_score_rate = 200.0
 stare_angle_tolerance = 13.0
 
+[node name="Control" parent="." instance=ExtResource( 4 )]
+
 [node name="CollisionShape" type="CollisionShape" parent="."]
 shape = SubResource( 4 )
 
 [node name="Head" type="Spatial" parent="."]
 
 [node name="SpotLight" type="SpotLight" parent="Head"]
+visible = false
 light_energy = 0.01
 light_indirect_energy = 0.2
 shadow_enabled = true
@@ -28,6 +32,7 @@ spot_angle_attenuation = 3.0
 
 [node name="OmniLight" type="OmniLight" parent="Head"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.461659 )
+visible = false
 omni_range = 0.999468
 omni_attenuation = 2.63902
 

@@ -15,7 +15,7 @@ var rng := RandomNumberGenerator.new()
 
 
 func host_game(local_player: bool):
-	print("Starting server local_player=", local_player)
+	print("host_game:", local_player)
 	peer = NetworkedMultiplayerENet.new()
 	var ok = peer.create_server(DEFAULT_PORT, MAX_PEERS)
 	if ok != OK: return get_tree().quit(1);
@@ -26,6 +26,7 @@ func host_game(local_player: bool):
 
 
 func join_game(address: String):
+	print("join_game:", address)
 	peer = NetworkedMultiplayerENet.new()
 	var ok = peer.create_client(address, DEFAULT_PORT)
 	if ok != OK: return get_tree().quit(1);
@@ -35,46 +36,27 @@ func join_game(address: String):
 
 
 func quit_game():
+	print("quit_game")
 	multiplayer.set_network_peer(null)
 	if has_node("/root/World"):
 		get_node("/root/World").queue_free()
 	players.clear()
-	emit_signal("disconnected")
+	emit_signal("disconnected", "")
 
 
-remotesync func player_join(player_id: int):
-	var sender_id = multiplayer.get_rpc_sender_id()
-	assert(sender_id == 1)
-	print("player_join ", player_id)
-	var player: KinematicBody = player_scene.instance()
-	player.set_name(str(player_id))
-	player.set_network_master(player_id)
-	player.set_process(false)
-	
-	# Move players to spawn points
-	# We have to get vector coordinates for each of the spawn points
-	var spawn_points := []
-	for point in world.get_node("SpawnPoints").get_children():
-		spawn_points.append(point.to_global(Vector3.ZERO))
-	
-	player.transform.origin = spawn_points[rng.randi_range(0, spawn_points.size() - 1)]
+puppetsync func player_join(player_id: int, at: Vector3):
+	print("player_join:", player_id)
+	var player: Player = player_scene.instance()
 	world.get_node("Players").add_child(player)
+	player.post_player_join(player_id, at)
+	players.append(player_id)
 
 
-remotesync func player_start(player_id: int):
-	var sender_id = multiplayer.get_rpc_sender_id()
-	assert(sender_id == 1)
-	print("player_start ", player_id)
-	var player: KinematicBody = world.get_node("Players").get_node(str(player_id))
-	player.set_process(true)
-
-
-remotesync func player_leave(player_id: int):
-	var sender_id = multiplayer.get_rpc_sender_id()
-	assert(sender_id == 1)
-	print("player_leave ", player_id)
-	var player: KinematicBody = world.get_node("Players").get_node(str(player_id))
+puppetsync func player_leave(player_id: int):
+	print("player_leave:", player_id)
+	var player: Player = world.get_node("Players").get_node(str(player_id))
 	player.queue_free()
+	players.erase(player_id)
 
 
 func _ready():
@@ -94,17 +76,17 @@ func _ready():
 func _network_peer_connected(id):
 	print("_network_peer_connected ", id)
 	if multiplayer.is_network_server():
-		for player_id in players:
-			rpc_id(id, "player_join", player_id) # Send existing players to new one
-		players.append(id) # Assume all new connections are players
-		rpc("player_join", id) # Add player for ALL peers
-		rpc_id(id, "player_start", id) # Unpause the new player AND server copy
+		# Send existing players to new one
+		for player_id in players: rpc_id(id, "player_join", player_id, Vector3.ZERO)
+		# Assume new peers want to play
+		var spawn_points = world.get_node("SpawnPoints").get_children()
+		var at = spawn_points[rng.randi_range(0, players.size())].transform.origin
+		rpc("player_join", id, at)
 
 
 func _network_peer_disconnected(id):
 	print("_network_peer_disconnected", id)
 	if multiplayer.is_network_server():
-		players.erase(id)
 		rpc("player_leave", id)
 
 

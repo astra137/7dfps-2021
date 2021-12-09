@@ -1,4 +1,5 @@
 extends KinematicBody
+class_name Player
 
 # State
 enum PlayerState {
@@ -18,8 +19,9 @@ export(int, 0, 1000) var initial_burst_score := 500
 export(float, 0.0, 500.0) var delta_score_rate := 80.0
 export(float, 0.0, 90.0) var stare_angle_tolerance := 20.0
 
-var vel = Vector3()
-var dir = Vector3()
+puppetsync var vel = Vector3.ZERO
+puppetsync var score := 0
+
 var staring_at := []
 var stared_by := []
 
@@ -34,22 +36,36 @@ onready var stare_timer: Timer = $StareTimer
 onready var spotlight: SpotLight = $Head/SpotLight
 onready var omnilight: OmniLight = $Head/OmniLight
 
-puppet var puppet_transform: Transform
-puppet var puppet_transform_head: Transform
-puppet var puppet_velocity: Vector3
-remotesync var score := 0
+
+
+
+
+
+var is_me setget , get_is_me
+
+func get_is_me():
+	return $Control.is_network_master()
+
+func post_player_join(id: int, initial_origin: Vector3):
+	print("post_player_join:", id, ":", initial_origin)
+	$Control.set_network_master(id)
+	name = str(id)
+	transform.origin = initial_origin
+	rset("transform",  transform)
+	if $Control.is_network_master():
+		camera.make_current()
+		$Head/proob/body.cast_shadow = GeometryInstance.SHADOW_CASTING_SETTING_SHADOWS_ONLY
+		$Head/proob/engine.cast_shadow = GeometryInstance.SHADOW_CASTING_SETTING_SHADOWS_ONLY
+	# else:
+		# $Head/proob/body.cast_shadow = GeometryInstance.SHADOW_CASTING_SETTING_ON
+		# $Head/proob/engine.cast_shadow = GeometryInstance.SHADOW_CASTING_SETTING_ON
 
 
 
 func _ready():
-	puppet_transform = transform
-	puppet_velocity = vel
-	if is_network_master():
-		camera.make_current()
-		hide_the_body.hide()
-	if OS.is_window_focused():
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	
+	rset_config("transform", MultiplayerAPI.RPC_MODE_PUPPETSYNC)
+	$Head.rset_config("transform", MultiplayerAPI.RPC_MODE_PUPPETSYNC)
+
 	# Choose a random color for the player
 	var rng = RandomNumberGenerator.new()
 	rng.randomize()
@@ -59,70 +75,70 @@ func _ready():
 
 
 
-func _exit_tree():
-	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+# func _exit_tree():
+# 	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+# 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 
 
-func _notification(what):
-	if what == MainLoop.NOTIFICATION_WM_FOCUS_IN:
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	elif what == MainLoop.NOTIFICATION_WM_FOCUS_OUT:
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+# func _notification(what):
+# 	if what == MainLoop.NOTIFICATION_WM_FOCUS_IN:
+# 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+# 	elif what == MainLoop.NOTIFICATION_WM_FOCUS_OUT:
+# 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 
 
-func _input(event):
-	if not is_network_master(): return
-	if not OS.is_window_focused(): return
+# func _input(event):
+# 	if not is_network_master(): return
+# 	if not OS.is_window_focused(): return
 
-	if event.is_action_pressed("ui_cancel"):
-		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+# 	if event.is_action_pressed("ui_cancel"):
+# 		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+# 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
-	elif event is InputEventMouseButton:
-		if Input.get_mouse_mode() == Input.MOUSE_MODE_VISIBLE:
-			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+# 	elif event is InputEventMouseButton:
+# 		if Input.get_mouse_mode() == Input.MOUSE_MODE_VISIBLE:
+# 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
-	elif event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-		rotation_helper.rotate_x(deg2rad(event.relative.y * mouse_sensitivity * -1))
-		self.rotate_y(deg2rad(event.relative.x * mouse_sensitivity * -1))
-		var camera_rot = rotation_helper.rotation_degrees
-		camera_rot.x = clamp(camera_rot.x, -70, 70)
-		rotation_helper.rotation_degrees = camera_rot
-
+# 	elif event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+# 		rotation_helper.rotate_x(deg2rad(event.relative.y * mouse_sensitivity * -1))
+# 		self.rotate_y(deg2rad(event.relative.x * mouse_sensitivity * -1))
+# 		var camera_rot = rotation_helper.rotation_degrees
+# 		camera_rot.x = clamp(camera_rot.x, -70, 70)
+# 		rotation_helper.rotation_degrees = camera_rot
 
 
 func _physics_process(delta):
-	dir = Vector3()
+	rotation_degrees.y = $Control.look_yaw
+	rotation_helper.rotation_degrees.x = $Control.look_pitch
+	var input_movement_vector = $Control.move.normalized()
+
+	# var input_movement_vector = Vector3()
+
+	# if is_network_master():
+	# 	if Input.is_action_pressed("movement_forward"):
+	# 		input_movement_vector.z += 1
+	# 	if Input.is_action_pressed("movement_backward"):
+	# 		input_movement_vector.z -= 1
+	# 	if Input.is_action_pressed("movement_left"):
+	# 		input_movement_vector.x -= 1
+	# 	if Input.is_action_pressed("movement_right"):
+	# 		input_movement_vector.x += 1
+	# 	if Input.is_action_pressed("movement_up"):
+	# 		input_movement_vector.y += 1
+	# 	if Input.is_action_pressed("movement_down"):
+	# 		input_movement_vector.y -= 1
+	# 	input_movement_vector = input_movement_vector.normalized()
+
 	var cam_xform = camera.get_global_transform()
 
-	var input_movement_vector = Vector3()
-
-	if is_network_master():
-		if Input.is_action_pressed("movement_forward"):
-			input_movement_vector.z += 1
-		if Input.is_action_pressed("movement_backward"):
-			input_movement_vector.z -= 1
-		if Input.is_action_pressed("movement_left"):
-			input_movement_vector.x -= 1
-		if Input.is_action_pressed("movement_right"):
-			input_movement_vector.x += 1
-		if Input.is_action_pressed("movement_up"):
-			input_movement_vector.y += 1
-		if Input.is_action_pressed("movement_down"):
-			input_movement_vector.y -= 1
-		input_movement_vector = input_movement_vector.normalized()
-
 	# Basis vectors are already normalized.
+	var dir = Vector3()
 	dir += -cam_xform.basis.z * input_movement_vector.z
 	dir += cam_xform.basis.x * input_movement_vector.x
 	dir += cam_xform.basis.y * input_movement_vector.y
-	dir = dir.normalized()
-
-	var target = dir
-	target *= max_speed
+	dir = dir.normalized() * max_speed
 
 	var accel
 	if dir.length() > 0:
@@ -130,32 +146,19 @@ func _physics_process(delta):
 	else:
 		accel = deacceleration
 
-	vel = vel.linear_interpolate(target, accel * delta)
+	vel = vel.linear_interpolate(dir, accel * delta)
+	vel = move_and_slide(vel, Vector3.ZERO, true, 4, deg2rad(MAX_SLOPE_ANGLE))
 
-	if is_network_master():
-		rset("puppet_transform_head", rotation_helper.transform)
-		rset("puppet_transform", transform)
-		rset("puppet_velocity", vel)
-	else:
-		rotation_helper.transform = puppet_transform_head
-		transform = puppet_transform
-		vel = puppet_velocity
-
-	vel = move_and_slide(vel, Vector3.ZERO, 0.05, 4, deg2rad(MAX_SLOPE_ANGLE))
-
-	# Set the puppet variables with new calculated values,
-	# effectively interpolating until remotely overwritten.
-	if not is_network_master():
-		puppet_transform = transform
-		puppet_velocity = vel
-
-	if is_network_master():
+	if multiplayer.is_network_server():
 		process_stare(delta)
 
+		rset_unreliable("vel", vel)
+		rset_unreliable("transform", transform)
+		$Head.rset_unreliable("transform", $Head.transform)
 
 
-# Handles staring mechanics. Function can only be ran on a master node.
-master func process_stare(delta):
+# Handles staring mechanics.
+func process_stare(delta):
 	# We need to raycast to every player to determine which ones are currently viewable (not behind an obstacle)
 	var players = get_tree().get_nodes_in_group("player")
 	players.remove(players.find(self))
@@ -178,17 +181,18 @@ master func process_stare(delta):
 				# Regardless of the state we need to make an rpc on the entity we're staring at
 				if not staring_at.has(player):
 					if player.has_method("being_stared"):
-						player.rpc_id(Helpers.get_player_id(player), "being_stared")
+						player.rpc("being_stared", Helpers.get_player_id(self))
 
 	# If we stop staring at someone we were previously staring at we will send them a little message ;)
 	for player in staring_at:
 		if not staring_at_temp.has(player):
 			# Letting other player know that we are done staring at them
 			if player.has_method("not_being_stared"):
-				player.rpc_id(Helpers.get_player_id(player), "not_being_stared")
+				player.rpc("not_being_stared", Helpers.get_player_id(self))
 			# If we stop staring at someone who's staring at us then we play the sound
 			if stared_by.has(player):
-				player.get_node("StareCountdownSound").play()
+				player.rpc("being_stared", Helpers.get_player_id(self))
+
 
 	# Setting the values for who we're staring at
 	staring_at = [] + staring_at_temp
@@ -197,7 +201,7 @@ master func process_stare(delta):
 	for p in stared_by:
 		if staring_at_temp.has(p):
 			staring_at_temp.remove(staring_at_temp.find(p))
-			p.get_node("StareCountdownSound").stop()
+			p.rpc("not_being_stared", Helpers.get_player_id(self))
 
 	if not staring_at_temp.empty():
 		match state:
@@ -226,20 +230,24 @@ func inc_score(amount: int):
 
 
 # Remotely called when your object is being stared at
-master func being_stared():
-	var sender = Helpers.get_player_node_by_id(get_tree().get_rpc_sender_id())
+puppet func being_stared(by_id: int):
+	print("being_stared:", by_id)
+	var sender = Helpers.get_player_node_by_id(by_id)
 	if not stared_by.has(sender):
 		stared_by.append(sender)
-		sender.get_node("StareCountdownSound").play()
+		if is_me:
+			sender.get_node("StareCountdownSound").play()
 
 
 
 # Remotely called when someone stops staring at you
-master func not_being_stared():
-	var sending = Helpers.get_player_node_by_id(get_tree().get_rpc_sender_id())
+puppet func not_being_stared(by_id: int):
+	print("not_being_stared:", by_id)
+	var sending = Helpers.get_player_node_by_id(by_id)
 	if stared_by.has(sending):
 		stared_by.remove(stared_by.find(sending))
-		sending.get_node("StareCountdownSound").stop()
+		if is_me:
+			sending.get_node("StareCountdownSound").stop()
 
 
 
@@ -255,30 +263,32 @@ func _on_StareTimer_timeout():
 		state = PlayerState.STARING_PERSISTENT
 		print("Staring Persistent")
 
+
 master func respawn(to: Vector3):
 	# Move player
 	transform.origin = to
-	
+
 	# Reset score
 	inc_score(-score)
-	
+
 	# Hide victor label
 	victor_area.visible = false
 	victor_area.get_node("Victor/Name").text = ""
-	
+
 	# Hide scoreboard
 	score_board.visible = false
-	
+
 	# Enable movement
 	pass
-	
+
+
 master func round_ended(victor: String):
 	# Disable movement
 	pass
-	
+
 	# Show scoreboard
 	score_board.visible = true
-	
+
 	# Show victor label
 	victor_area.visible = true
 	victor_area.get_node("Victor/Name").text = victor

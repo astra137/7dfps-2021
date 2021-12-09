@@ -75,15 +75,5 @@ wait_time = 10.0
 wait_time = 300.0
 autostart = true
 
-[node name="SpotLight" type="SpotLight" parent="."]
-transform = Transform( 0.952385, 0, -0.304898, 0, 1, 0, 0.304898, 0, 0.952385, -3.12809, 1.82438, 84.141 )
-light_color = Color( 0.0823529, 0.858824, 0.788235, 1 )
-light_energy = 0.5
-shadow_enabled = true
-spot_range = 186.456
-spot_attenuation = 2.82843
-spot_angle = 23.1015
-spot_angle_attenuation = 2.51677
-
 [connection signal="timeout" from="PostRoundTimer" to="." method="_on_PostRoundTimer_timeout"]
 [connection signal="timeout" from="RoundTimer" to="." method="end_round"]

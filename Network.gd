@@ -44,11 +44,11 @@ func quit_game():
 	emit_signal("disconnected", "")
 
 
-puppetsync func player_join(player_id: int, at: Vector3):
+puppetsync func player_join(player_id: int, pos: Vector3, vel: Vector3):
 	print("player_join:", player_id)
 	var player: Player = player_scene.instance()
 	world.get_node("Players").add_child(player)
-	player.post_player_join(player_id, at)
+	player.post_player_join(player_id, pos, vel)
 	players.append(player_id)
 
 
@@ -77,11 +77,14 @@ func _network_peer_connected(id):
 	print("_network_peer_connected ", id)
 	if multiplayer.is_network_server():
 		# Send existing players to new one
-		for player_id in players: rpc_id(id, "player_join", player_id, Vector3.ZERO)
+		for player_id in players:
+			var player_node = Helpers.get_player_node_by_id(player_id)
+			rpc_id(id, "player_join", player_id, player_node._position, player_node._velocity)
+
 		# Assume new peers want to play
 		var spawn_points = world.get_node("SpawnPoints").get_children()
 		var at = spawn_points[rng.randi_range(0, players.size())].transform.origin
-		rpc("player_join", id, at)
+		rpc("player_join", id, at, Vector3.ZERO)
 
 
 func _network_peer_disconnected(id):

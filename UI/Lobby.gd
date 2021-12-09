@@ -20,6 +20,9 @@ func _on_start_pressed2():
 
 func _on_disconnected(errtxt: String):
 	print("Lobby _server_disconnected")
+	# Sometimes the Player/Soul doesn't release mouse
+	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	$Menu.show()
 	if not errtxt.empty():
 		$ErrorDialog.dialog_text = errtxt

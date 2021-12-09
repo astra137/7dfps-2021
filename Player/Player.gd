@@ -11,7 +11,7 @@ var state: int = PlayerState.IDLE
 
 const MAX_SLOPE_ANGLE = 40
 
-export(float, 0.0, 1.0) var max_speed := 18.0
+export(float, 0.0, 100.0) var max_speed := 18.0
 export(float, 0.0, 20.0) var acceleration := 4.5
 export(float, 0.0, 20.0) var deacceleration := 16.0
 export(float, 0.0, 0.5) var mouse_sensitivity := 0.05
@@ -19,12 +19,19 @@ export(int, 0, 1000) var initial_burst_score := 500
 export(float, 0.0, 500.0) var delta_score_rate := 80.0
 export(float, 0.0, 90.0) var stare_angle_tolerance := 20.0
 
-puppetsync var vel = Vector3.ZERO
-puppetsync var score := 0
+# Server-set values for this player's kinematics
+var _position := Vector3.ZERO
+var _velocity := Vector3.ZERO
+
+# Locally calculated values for this player's kinematics
+var velocity := Vector3.ZERO
 
 var staring_at := []
 var stared_by := []
 
+puppetsync var score := 0
+
+onready var control := $Control
 onready var camera: Camera = $Head/Camera
 onready var rotation_helper: Spatial = $Head
 onready var hide_the_body: Spatial = $Head/proob
@@ -40,15 +47,17 @@ onready var omnilight: OmniLight = $Head/OmniLight
 
 
 func get_is_me():
-	return $Control.is_network_master()
+	return control.is_network_master()
 
-func post_player_join(id: int, initial_origin: Vector3):
-	print("post_player_join:", id, ":", initial_origin)
-	$Control.set_network_master(id)
+func post_player_join(id: int, pos: Vector3, vel: Vector3):
+	print("post_player_join:", id)
+	control.set_network_master(id)
 	name = str(id)
-	transform.origin = initial_origin
-	rset("transform",  transform)
-	if $Control.is_network_master():
+	_position = pos
+	_velocity = vel
+	transform.origin = _position
+	velocity = _velocity
+	if control.is_network_master():
 		camera.make_current()
 		$Head/proob/body.cast_shadow = GeometryInstance.SHADOW_CASTING_SETTING_SHADOWS_ONLY
 		$Head/proob/engine.cast_shadow = GeometryInstance.SHADOW_CASTING_SETTING_SHADOWS_ONLY
@@ -57,11 +66,12 @@ func post_player_join(id: int, initial_origin: Vector3):
 		$Head/proob/engine.cast_shadow = GeometryInstance.SHADOW_CASTING_SETTING_ON
 
 
+puppetsync func set_real_kinematics(pos: Vector3, vel: Vector3):
+	_position = pos;
+	_velocity = vel;
+
 
 func _ready():
-	rset_config("transform", MultiplayerAPI.RPC_MODE_PUPPETSYNC)
-	$Head.rset_config("transform", MultiplayerAPI.RPC_MODE_PUPPETSYNC)
-
 	# Choose a random color for the player
 	var rng = RandomNumberGenerator.new()
 	rng.randomize()
@@ -70,77 +80,34 @@ func _ready():
 	omnilight.light_color = Color.from_hsv(hue, 1.0, 1.0, 1.0)
 
 
-# func _exit_tree():
-# 	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-# 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-
-
-
-# func _notification(what):
-# 	if what == MainLoop.NOTIFICATION_WM_FOCUS_IN:
-# 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-# 	elif what == MainLoop.NOTIFICATION_WM_FOCUS_OUT:
-# 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-
-
-
-# func _input(event):
-# 	if not is_network_master(): return
-# 	if not OS.is_window_focused(): return
-
-# 	if event.is_action_pressed("ui_cancel"):
-# 		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-# 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-
-# 	elif event is InputEventMouseButton:
-# 		if Input.get_mouse_mode() == Input.MOUSE_MODE_VISIBLE:
-# 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-
-# 	elif event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-# 		rotation_helper.rotate_x(deg2rad(event.relative.y * mouse_sensitivity * -1))
-# 		self.rotate_y(deg2rad(event.relative.x * mouse_sensitivity * -1))
-# 		var camera_rot = rotation_helper.rotation_degrees
-# 		camera_rot.x = clamp(camera_rot.x, -70, 70)
-# 		rotation_helper.rotation_degrees = camera_rot
-
-func _process(_delta):
-	if multiplayer.is_network_server():
-		rset_unreliable("vel", vel)
-		rset_unreliable("transform", transform)
-		$Head.rset_unreliable("transform", $Head.transform)
+func _process(delta):
 	if get_is_me():
 		score_bar.value = score
 
+	if multiplayer.is_network_server():
+		# The server's simulation is the source of truth.
+		rpc_unreliable("set_real_kinematics", transform.origin, velocity)
+	else:
+		# Clients also simulate kinematics, but need to interpolate to server values.
+		transform.origin = transform.origin.linear_interpolate(_position, delta * 0.5)
+		velocity = velocity.linear_interpolate(_velocity, delta * 0.5)
+
 
 func _physics_process(delta):
-	rotation_degrees.y = $Control.look_yaw
-	rotation_helper.rotation_degrees.x = $Control.look_pitch
-	var input_movement_vector = $Control.move.normalized()
+	# We accept that a player could cheat with aimbot
+	# So that we never limit how fast a player can look around
+	rotation_degrees.y = control.look_yaw
+	rotation_helper.rotation_degrees.x = control.look_pitch
 
-	# var input_movement_vector = Vector3()
-
-	# if is_network_master():
-	# 	if Input.is_action_pressed("movement_forward"):
-	# 		input_movement_vector.z += 1
-	# 	if Input.is_action_pressed("movement_backward"):
-	# 		input_movement_vector.z -= 1
-	# 	if Input.is_action_pressed("movement_left"):
-	# 		input_movement_vector.x -= 1
-	# 	if Input.is_action_pressed("movement_right"):
-	# 		input_movement_vector.x += 1
-	# 	if Input.is_action_pressed("movement_up"):
-	# 		input_movement_vector.y += 1
-	# 	if Input.is_action_pressed("movement_down"):
-	# 		input_movement_vector.y -= 1
-	# 	input_movement_vector = input_movement_vector.normalized()
-
+	# Motion, however, will be simulated.
+	var move_intent = control.move_dir.normalized()
 	var cam_xform = camera.get_global_transform()
 
 	# Basis vectors are already normalized.
 	var dir = Vector3()
-	dir += -cam_xform.basis.z * input_movement_vector.z
-	dir += cam_xform.basis.x * input_movement_vector.x
-	dir += cam_xform.basis.y * input_movement_vector.y
+	dir += -cam_xform.basis.z * move_intent.z
+	dir += cam_xform.basis.x * move_intent.x
+	dir += cam_xform.basis.y * move_intent.y
 	dir = dir.normalized() * max_speed
 
 	var accel
@@ -149,8 +116,8 @@ func _physics_process(delta):
 	else:
 		accel = deacceleration
 
-	vel = vel.linear_interpolate(dir, accel * delta)
-	vel = move_and_slide(vel, Vector3.ZERO, true, 4, deg2rad(MAX_SLOPE_ANGLE))
+	velocity = velocity.linear_interpolate(dir, accel * delta)
+	velocity = move_and_slide(velocity, Vector3.ZERO, true, 4, deg2rad(MAX_SLOPE_ANGLE))
 
 	if multiplayer.is_network_server():
 		process_stare(delta)

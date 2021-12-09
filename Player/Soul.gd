@@ -2,9 +2,14 @@ extends Node
 
 export(float, 0.0, 0.5) var mouse_sensitivity := 0.05
 
-puppetsync var move := Vector3.ZERO
-puppetsync var look_yaw := 0.0
-puppetsync var look_pitch := 0.0
+var move_dir := Vector3.ZERO
+var look_pitch := 0.0
+var look_yaw := 0.0
+
+puppetsync func set_intent(move: Vector3, pitch: float, yaw: float):
+	move_dir = move
+	look_pitch = pitch
+	look_yaw = yaw
 
 func _ready():
 	if not is_network_master(): return
@@ -20,7 +25,8 @@ func _notification(what):
 	if not is_inside_tree(): return
 	if not is_network_master(): return
 	if what == MainLoop.NOTIFICATION_WM_FOCUS_IN:
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+		# Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+		pass # Let _input handle recapturing the mouse
 	elif what == MainLoop.NOTIFICATION_WM_FOCUS_OUT:
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
@@ -41,22 +47,19 @@ func _input(event):
 		var dy = event.relative.y * mouse_sensitivity * -1
 		look_pitch = clamp(look_pitch + dy, -70, 70)
 		look_yaw = wrapf(look_yaw + dx, 0, 360)
-		rset_unreliable("look_yaw", look_yaw)
-		rset_unreliable("look_pitch", look_pitch)
 
-func _physics_process(_delta):
-	if not is_network_master(): return
-	move = Vector3.ZERO
+	move_dir = Vector3.ZERO
 	if Input.is_action_pressed("movement_forward"):
-		move.z += 1
+		move_dir.z += 1
 	if Input.is_action_pressed("movement_backward"):
-		move.z -= 1
+		move_dir.z -= 1
 	if Input.is_action_pressed("movement_left"):
-		move.x -= 1
+		move_dir.x -= 1
 	if Input.is_action_pressed("movement_right"):
-		move.x += 1
+		move_dir.x += 1
 	if Input.is_action_pressed("movement_up"):
-		move.y += 1
+		move_dir.y += 1
 	if Input.is_action_pressed("movement_down"):
-		move.y -= 1
-	rset_unreliable("move", move) # does this spam packets?
+		move_dir.y -= 1
+
+	rpc_unreliable("set_intent", move_dir, look_pitch, look_yaw)

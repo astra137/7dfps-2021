@@ -40,9 +40,6 @@ onready var omnilight: OmniLight = $Head/OmniLight
 
 
 
-
-var is_me setget , get_is_me
-
 func get_is_me():
 	return $Control.is_network_master()
 
@@ -56,9 +53,9 @@ func post_player_join(id: int, initial_origin: Vector3):
 		camera.make_current()
 		$Head/proob/body.cast_shadow = GeometryInstance.SHADOW_CASTING_SETTING_SHADOWS_ONLY
 		$Head/proob/engine.cast_shadow = GeometryInstance.SHADOW_CASTING_SETTING_SHADOWS_ONLY
-	# else:
-		# $Head/proob/body.cast_shadow = GeometryInstance.SHADOW_CASTING_SETTING_ON
-		# $Head/proob/engine.cast_shadow = GeometryInstance.SHADOW_CASTING_SETTING_ON
+	else:
+		$Head/proob/body.cast_shadow = GeometryInstance.SHADOW_CASTING_SETTING_ON
+		$Head/proob/engine.cast_shadow = GeometryInstance.SHADOW_CASTING_SETTING_ON
 
 
 
@@ -108,6 +105,9 @@ func _ready():
 # 		camera_rot.x = clamp(camera_rot.x, -70, 70)
 # 		rotation_helper.rotation_degrees = camera_rot
 
+func _process(_delta):
+	if get_is_me():
+		score_bar.value = score
 
 func _physics_process(delta):
 	rotation_degrees.y = $Control.look_yaw
@@ -225,31 +225,6 @@ func process_stare(delta):
 func inc_score(amount: int):
 	score += amount
 	rset("score", score)
-	score_bar.value = score
-
-
-
-# Remotely called when your object is being stared at
-puppet func being_stared(by_id: int):
-	print("being_stared:", by_id)
-	var sender = Helpers.get_player_node_by_id(by_id)
-	if not stared_by.has(sender):
-		stared_by.append(sender)
-		if is_me:
-			sender.get_node("StareCountdownSound").play()
-
-
-
-# Remotely called when someone stops staring at you
-puppet func not_being_stared(by_id: int):
-	print("not_being_stared:", by_id)
-	var sending = Helpers.get_player_node_by_id(by_id)
-	if stared_by.has(sending):
-		stared_by.remove(stared_by.find(sending))
-		if is_me:
-			sending.get_node("StareCountdownSound").stop()
-
-
 
 # Receive burst points and switch to points over time
 func _on_StareTimer_timeout():
@@ -259,9 +234,34 @@ func _on_StareTimer_timeout():
 			if staring_at_temp.has(p):
 				staring_at_temp.remove(staring_at_temp.find(p))
 
-		inc_score(initial_burst_score * staring_at_temp.size())
 		state = PlayerState.STARING_PERSISTENT
 		print("Staring Persistent")
+		inc_score(initial_burst_score * staring_at_temp.size())
+
+
+
+# Remotely called when your object is being stared at
+puppetsync func being_stared(by_id: int):
+	print("being_stared:", by_id, " and is me: ", get_is_me())
+	var sender = Helpers.get_player_node_by_id(by_id)
+	if not stared_by.has(sender):
+		stared_by.append(sender)
+		if get_is_me():
+			sender.get_node("StareCountdownSound").play()
+
+
+
+# Remotely called when someone stops staring at you
+puppetsync func not_being_stared(by_id: int):
+	print("not_being_stared:", by_id, " and is me: ", get_is_me())
+	var sending = Helpers.get_player_node_by_id(by_id)
+	if stared_by.has(sending):
+		stared_by.remove(stared_by.find(sending))
+		if get_is_me():
+			sending.get_node("StareCountdownSound").stop()
+
+
+
 
 
 master func respawn(to: Vector3):

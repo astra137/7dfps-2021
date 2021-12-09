@@ -34,7 +34,6 @@ puppetsync var score := 0
 onready var control := $Control
 onready var camera: Camera = $Head/Camera
 onready var rotation_helper: Spatial = $Head
-onready var hide_the_body: Spatial = $Head/proob
 onready var score_bar: ProgressBar = get_tree().get_root().get_node("World/GameUI/VerticalElements/TopRow/ScoreElements/Score")
 onready var score_board := get_tree().get_root().get_node("World/GameUI/ScoreboardBackground")
 onready var victor_area := get_tree().get_root().get_node("World/GameUI/ScoreboardBackground/ScoreboardMargin/Scoreboard/VictorArea")
@@ -144,27 +143,21 @@ func process_stare(delta):
 				staring_at_temp.append(player)
 
 	for player in players:
-		var here = Helpers.get_player_id(self)
-		var there = Helpers.get_player_id(player)
 		if staring_at_temp.has(player): # self is staring at player
 			if not player.stared_by.has(self): # player doesn't know yet
 				player.stared_by.append(self)
 				if not stared_by.has(player): # player is NOT looking at self
-					player.get_node("Sounds").rpc_id(here, "cue_lock_charging", true)
-					self.get_node("Sounds").rpc_id(there, "cue_enemy_lock", true)
+					self.rpc("cue_lock", Helpers.get_player_id(player), true)
 				else: # other player is looking at self
-					player.get_node("Sounds").rpc_id(here, "cue_enemy_lock", false)
-					self.get_node("Sounds").rpc_id(there, "cue_lock_charging", false)
+					player.rpc("cue_lock", Helpers.get_player_id(self), false)
 
 		else: # self is NOT looking at player
 			if player.stared_by.has(self): # player doesn't know yet
 				player.stared_by.erase(self)
 				if not stared_by.has(player): # player is NOT looking at self
-					player.get_node("Sounds").rpc_id(here, "cue_lock_charging", false)
-					self.get_node("Sounds").rpc_id(there, "cue_enemy_lock", false)
+					self.rpc("cue_lock", Helpers.get_player_id(player), false)
 				else: # player is looking at self
-					player.get_node("Sounds").rpc_id(here, "cue_enemy_lock", true)
-					self.get_node("Sounds").rpc_id(there, "cue_lock_charging", true)
+					player.rpc("cue_lock", Helpers.get_player_id(self), true)
 
 
 	# Setting the values for who we're staring at
@@ -208,6 +201,13 @@ func _on_StareTimer_timeout():
 		inc_score(initial_burst_score * staring_at_temp.size())
 
 
+# All connections receive lock cues, but only the two involved play sounds.
+puppetsync func cue_lock(target_id: int, locked: bool):
+	var target = Helpers.get_player_node_by_id(target_id)
+	if get_is_me(): # self is the local Player
+		target.get_node("Sounds").cue_player_lock(locked)
+	elif target.get_is_me(): # self is targetting the local Player
+		target.get_node("Sounds").cue_enemy_lock(locked)
 
 
 puppetsync func respawn(to: Vector3):

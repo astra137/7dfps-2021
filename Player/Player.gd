@@ -171,7 +171,6 @@ func process_stare(delta):
 	for player in players:
 		var raycast_to = player.global_transform.xform(Vector3.ZERO)
 		var intersect = space_state.intersect_ray(raycast_from, raycast_to)
-
 		# If the player is viewable the raycast will collide with it
 		if intersect and !intersect.empty() and player == intersect.collider:
 			# We want to calculate the angle between the direction to the other player and the direction of where the camera is facing
@@ -179,30 +178,30 @@ func process_stare(delta):
 			if player_direction.angle_to(Vector3(0, 0, -1)) <= (stare_angle_tolerance * PI/180):
 				staring_at_temp.append(player)
 
-				# Regardless of the state we need to make an rpc on the entity we're staring at
-				if not staring_at.has(player):
-					if player.has_method("being_stared"):
-						player.rpc("being_stared", Helpers.get_player_id(self))
+	for player in players:
+		if staring_at_temp.has(player): # self is staring at player
+			if not player.stared_by.has(self): # player doesn't know yet
+				player.stared_by.append(self)
 
-	# If we stop staring at someone we were previously staring at we will send them a little message ;)
-	for player in staring_at:
-		if not staring_at_temp.has(player):
-			# Letting other player know that we are done staring at them
-			if player.has_method("not_being_stared"):
-				player.rpc("not_being_stared", Helpers.get_player_id(self))
-			# If we stop staring at someone who's staring at us then we play the sound
-			if stared_by.has(player):
-				rpc("being_stared", Helpers.get_player_id(player))
+				if not stared_by.has(player): # player is NOT looking at self
+					player.rpc("being_stared", Helpers.get_player_id(self))
+				else: # other player is looking at self
+					rpc("not_being_stared", Helpers.get_player_id(player))
+
+		else: # self is NOT looking at player
+			if player.stared_by.has(self): # player doesn't know yet
+				player.stared_by.erase(self)
+				if not stared_by.has(player): # player is NOT looking at self
+					player.rpc("not_being_stared", Helpers.get_player_id(self))
+				else: # player is looking at self
+					rpc("being_stared", Helpers.get_player_id(player))
 
 
 	# Setting the values for who we're staring at
 	staring_at = [] + staring_at_temp
 
-	# We are removing players who are staring at us so we only get the players that we are staring at
-	for p in stared_by:
-		if staring_at_temp.has(p):
-			staring_at_temp.remove(staring_at_temp.find(p))
-			rpc("not_being_stared", Helpers.get_player_id(p))
+	for player in stared_by:
+		staring_at_temp.erase(player)
 
 	if not staring_at_temp.empty():
 		match state:
@@ -243,23 +242,16 @@ func _on_StareTimer_timeout():
 
 # Remotely called when your object is being stared at
 puppetsync func being_stared(by_id: int):
-	print("being_stared:", by_id, " and is me: ", get_is_me())
-	var sender = Helpers.get_player_node_by_id(by_id)
-	if not stared_by.has(sender):
-		stared_by.append(sender)
-		if get_is_me():
-			sender.get_node("StareCountdownSound").play()
-
+	print("being_stared:", by_id)
+	if get_is_me():
+		$StareCountdownSound.play()
 
 
 # Remotely called when someone stops staring at you
 puppetsync func not_being_stared(by_id: int):
-	print("not_being_stared:", by_id, " and is me: ", get_is_me())
-	var sending = Helpers.get_player_node_by_id(by_id)
-	if stared_by.has(sending):
-		stared_by.remove(stared_by.find(sending))
-		if get_is_me():
-			sending.get_node("StareCountdownSound").stop()
+	print("not_being_stared:", by_id)
+	if get_is_me():
+		$StareCountdownSound.stop()
 
 
 

@@ -57,7 +57,7 @@ remotesync func player_join(player_id: int):
 	for point in world.get_node("SpawnPoints").get_children():
 		spawn_points.append(point.to_global(Vector3.ZERO))
 	
-	player.transform.origin = spawn_points[rng.randi_range(0, spawn_points.size())]
+	player.transform.origin = spawn_points[rng.randi_range(0, spawn_points.size() - 1)]
 	world.get_node("Players").add_child(player)
 
 

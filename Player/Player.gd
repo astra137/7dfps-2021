@@ -31,6 +31,8 @@ onready var score_board := get_tree().get_root().get_node("World/GameUI/Scoreboa
 onready var victor_area := get_tree().get_root().get_node("World/GameUI/ScoreboardBackground/ScoreboardMargin/Scoreboard/VictorArea")
 onready var stare_sound: AudioStreamPlayer = $StareCountdownSound
 onready var stare_timer: Timer = $StareTimer
+onready var spotlight: SpotLight = $Head/SpotLight
+onready var omnilight: OmniLight = $Head/OmniLight
 
 puppet var puppet_transform: Transform
 puppet var puppet_transform_head: Transform
@@ -47,6 +49,13 @@ func _ready():
 		hide_the_body.hide()
 	if OS.is_window_focused():
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	
+	# Choose a random color for the player
+	var rng = RandomNumberGenerator.new()
+	rng.randomize()
+	var hue = rng.randf_range(0, 1.0)
+	spotlight.light_color = Color.from_hsv(hue, 1.0, 1.0, 1.0)
+	omnilight.light_color = Color.from_hsv(hue, 1.0, 1.0, 1.0)
 
 
 

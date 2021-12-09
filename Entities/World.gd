@@ -67,7 +67,7 @@ func _on_PostRoundTimer_timeout():
 		spawn_points.shuffle()
 		
 		for player in players:
-			var index = rng.randi_range(0, spawn_points.size())
+			var index = rng.randi_range(0, spawn_points.size() - 1)
 			if player.has_method("respawn"):
 				player.rpc_id(Helpers.get_player_id(player), "respawn", spawn_points.pop_at(index))
 		

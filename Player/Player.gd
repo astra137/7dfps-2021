@@ -31,7 +31,6 @@ onready var hide_the_body: Spatial = $Head/proob
 onready var score_bar: ProgressBar = get_tree().get_root().get_node("World/GameUI/VerticalElements/TopRow/ScoreElements/Score")
 onready var score_board := get_tree().get_root().get_node("World/GameUI/ScoreboardBackground")
 onready var victor_area := get_tree().get_root().get_node("World/GameUI/ScoreboardBackground/ScoreboardMargin/Scoreboard/VictorArea")
-onready var stare_sound: AudioStreamPlayer = $StareCountdownSound
 onready var stare_timer: Timer = $StareTimer
 onready var spotlight: SpotLight = $Head/SpotLight
 onready var omnilight: OmniLight = $Head/OmniLight
@@ -69,7 +68,6 @@ func _ready():
 	var hue = rng.randf_range(0, 1.0)
 	spotlight.light_color = Color.from_hsv(hue, 1.0, 1.0, 1.0)
 	omnilight.light_color = Color.from_hsv(hue, 1.0, 1.0, 1.0)
-
 
 
 # func _exit_tree():
@@ -179,22 +177,27 @@ func process_stare(delta):
 				staring_at_temp.append(player)
 
 	for player in players:
+		var here = Helpers.get_player_id(self)
+		var there = Helpers.get_player_id(player)
 		if staring_at_temp.has(player): # self is staring at player
 			if not player.stared_by.has(self): # player doesn't know yet
 				player.stared_by.append(self)
-
 				if not stared_by.has(player): # player is NOT looking at self
-					player.rpc("being_stared", Helpers.get_player_id(self))
+					player.get_node("Sounds").rpc_id(here, "cue_lock_charging", true)
+					self.get_node("Sounds").rpc_id(there, "cue_enemy_lock", true)
 				else: # other player is looking at self
-					rpc("not_being_stared", Helpers.get_player_id(player))
+					player.get_node("Sounds").rpc_id(here, "cue_enemy_lock", false)
+					self.get_node("Sounds").rpc_id(there, "cue_lock_charging", false)
 
 		else: # self is NOT looking at player
 			if player.stared_by.has(self): # player doesn't know yet
 				player.stared_by.erase(self)
 				if not stared_by.has(player): # player is NOT looking at self
-					player.rpc("not_being_stared", Helpers.get_player_id(self))
+					player.get_node("Sounds").rpc_id(here, "cue_lock_charging", false)
+					self.get_node("Sounds").rpc_id(there, "cue_enemy_lock", false)
 				else: # player is looking at self
-					rpc("being_stared", Helpers.get_player_id(player))
+					player.get_node("Sounds").rpc_id(here, "cue_enemy_lock", true)
+					self.get_node("Sounds").rpc_id(there, "cue_lock_charging", true)
 
 
 	# Setting the values for who we're staring at
@@ -215,7 +218,6 @@ func process_stare(delta):
 		match state:
 			PlayerState.STARING_COUNTDOWN, PlayerState.STARING_PERSISTENT:
 				stare_timer.stop()
-				stare_sound.stop()
 				state = PlayerState.IDLE
 				print("Idle")
 
@@ -240,48 +242,31 @@ func _on_StareTimer_timeout():
 
 
 
-# Remotely called when your object is being stared at
-puppetsync func being_stared(by_id: int):
-	print("being_stared:", by_id)
-	if get_is_me():
-		$StareCountdownSound.play()
 
-
-# Remotely called when someone stops staring at you
-puppetsync func not_being_stared(by_id: int):
-	print("not_being_stared:", by_id)
-	if get_is_me():
-		$StareCountdownSound.stop()
-
-
-
-
-
-master func respawn(to: Vector3):
+puppetsync func respawn(to: Vector3):
 	# Move player
 	transform.origin = to
 
-	# Reset score
-	inc_score(-score)
+	if get_is_me():
+		# Hide victor label
+		victor_area.visible = false
+		victor_area.get_node("Victor/Name").text = ""
 
-	# Hide victor label
-	victor_area.visible = false
-	victor_area.get_node("Victor/Name").text = ""
+		# Hide scoreboard
+		score_board.visible = false
 
-	# Hide scoreboard
-	score_board.visible = false
-
-	# Enable movement
-	pass
+		# Enable movement
+		pass
 
 
-master func round_ended(victor: String):
+puppetsync func round_ended(victor: String):
+	if get_is_me():
 	# Disable movement
-	pass
+		pass
 
-	# Show scoreboard
-	score_board.visible = true
+		# Show scoreboard
+		score_board.visible = true
 
-	# Show victor label
-	victor_area.visible = true
-	victor_area.get_node("Victor/Name").text = victor
+		# Show victor label
+		victor_area.visible = true
+		victor_area.get_node("Victor/Name").text = victor

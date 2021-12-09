@@ -67,8 +67,7 @@ func _on_PostRoundTimer_timeout():
 
 		for player in players:
 			var index = rng.randi_range(0, spawn_points.size() - 1)
-			if player.has_method("respawn"):
-				player.rpc_id(Helpers.get_player_id(player), "respawn", spawn_points.pop_at(index))
+			player.rpc("respawn", spawn_points.pop_at(index))
 
 		# Start round timer
 		round_timer.start()

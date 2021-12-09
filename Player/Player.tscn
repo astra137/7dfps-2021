@@ -2,7 +2,7 @@
 
 [ext_resource path="res://Player/Player.gd" type="Script" id=1]
 [ext_resource path="res://Entities/Proob/proob.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Player/Spotting Warning.wav" type="AudioStream" id=3]
+[ext_resource path="res://Player/Sounds.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Player/Soul.tscn" type="PackedScene" id=4]
 
 [sub_resource type="SphereShape" id=4]
@@ -14,6 +14,8 @@ delta_score_rate = 200.0
 stare_angle_tolerance = 13.0
 
 [node name="Control" parent="." instance=ExtResource( 4 )]
+
+[node name="Sounds" parent="." instance=ExtResource( 3 )]
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
 shape = SubResource( 4 )
@@ -47,8 +49,5 @@ transform = Transform( -0.2, 0, -1.74846e-08, 0, 0.2, 0, 1.74846e-08, 0, -0.2, 0
 [node name="StareTimer" type="Timer" parent="."]
 wait_time = 1.75
 one_shot = true
-
-[node name="StareCountdownSound" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 3 )
 
 [connection signal="timeout" from="StareTimer" to="." method="_on_StareTimer_timeout"]

@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/Enemy Lock Warning.wav-a8c2b2eff843e5dff5f61a9d7c82a6d0.sample"
+
+[deps]
+
+source_file="res://Player/Enemy Lock Warning.wav"
+dest_files=[ "res://.import/Enemy Lock Warning.wav-a8c2b2eff843e5dff5f61a9d7c82a6d0.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=false
+edit/loop=false
+compress/mode=0

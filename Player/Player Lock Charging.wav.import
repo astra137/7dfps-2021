@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/Player Lock Charging.wav-f3655cca8e9f6abd8544fc7fd0375812.sample"
+
+[deps]
+
+source_file="res://Player/Player Lock Charging.wav"
+dest_files=[ "res://.import/Player Lock Charging.wav-f3655cca8e9f6abd8544fc7fd0375812.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=false
+edit/loop=false
+compress/mode=0

@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy:
-    environment: ludservilo
+    environment: live
     runs-on: ubuntu-latest
     steps:
     - name: ssh

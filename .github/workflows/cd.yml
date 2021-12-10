@@ -1,0 +1,26 @@
+name: CD
+
+on:
+  push:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    environment: ludservilo
+    runs-on: ubuntu-latest
+    steps:
+    - name: ssh
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        script: |
+          cd ~/7dfps-2021
+          git pull
+          godot --export-pack Server server.pck
+          docker build -t fps .
+          docker stop fps || true
+          docker run -d -p 10567:10567/udp --rm --name fps fps

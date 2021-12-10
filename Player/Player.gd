@@ -88,8 +88,8 @@ func _process(delta):
 		rpc_unreliable("set_real_kinematics", transform.origin, velocity)
 	else:
 		# Clients also simulate kinematics, but need to interpolate to server values.
-		transform.origin = transform.origin.linear_interpolate(_position, delta * 0.5)
-		velocity = velocity.linear_interpolate(_velocity, delta * 0.5)
+		transform.origin = transform.origin.linear_interpolate(_position, delta * 30)
+		velocity = velocity.linear_interpolate(_velocity, delta * 30)
 
 
 func _physics_process(delta):

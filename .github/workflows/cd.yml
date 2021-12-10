@@ -21,6 +21,6 @@ jobs:
           cd ~/7dfps-2021
           git pull
           godot --export-pack Server server.pck
-          docker build -t fps .
+          docker build -f server.dockerfile -t fps .
           docker stop fps || true
           docker run -d -p 10567:10567/udp --rm --name fps fps

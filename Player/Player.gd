@@ -12,12 +12,16 @@ var state: int = PlayerState.IDLE
 const MAX_SLOPE_ANGLE = 40
 
 export(float, 0.0, 100.0) var max_speed := 18.0
-export(float, 0.0, 20.0) var acceleration := 4.5
-export(float, 0.0, 20.0) var deacceleration := 16.0
+export(float, 0.0, 10.0) var acceleration_period := 1.0
+export(float, 0.0, 10.0) var deceleration_period := 5.0
+export(float, EASE) var acceleration_curve := 0.5
+export(float, EASE) var deceleration_curve := 0.5
+export(float, 0.0, 2.0) var max_delta_velocity := 0.5
 export(float, 0.0, 0.5) var mouse_sensitivity := 0.05
 export(int, 0, 1000) var initial_burst_score := 500
 export(float, 0.0, 500.0) var delta_score_rate := 80.0
 export(float, 0.0, 90.0) var stare_angle_tolerance := 20.0
+
 
 # Server-set values for this player's kinematics
 var _position := Vector3.ZERO
@@ -25,6 +29,7 @@ var _velocity := Vector3.ZERO
 
 # Locally calculated values for this player's kinematics
 var velocity := Vector3.ZERO
+var velocity_percentage := 0.0
 
 var staring_at := []
 var stared_by := []
@@ -77,6 +82,7 @@ func _ready():
 	var hue = rng.randf_range(0, 1.0)
 	spotlight.light_color = Color.from_hsv(hue, 1.0, 1.0, 1.0)
 	omnilight.light_color = Color.from_hsv(hue, 1.0, 1.0, 1.0)
+	print(ease(20, 1.0))
 
 
 func _process(delta):
@@ -109,13 +115,15 @@ func _physics_process(delta):
 	dir += cam_xform.basis.y * move_intent.y
 	dir = dir.normalized() * max_speed
 
-	var accel
+	var weight
 	if dir.length() > 0:
-		accel = acceleration
+		velocity_percentage = clamp(velocity_percentage + (delta / acceleration_period), 0.0, 1.0)
+		weight = ease(velocity_percentage, acceleration_curve)
 	else:
-		accel = deacceleration
+		velocity_percentage = clamp(velocity_percentage - delta / deceleration_period, 0.0, 1.0)
+		weight = 1 - ease(velocity_percentage, deceleration_curve)
 
-	velocity = velocity.linear_interpolate(dir, accel * delta)
+	velocity = velocity.move_toward(dir, max_delta_velocity * weight)
 	velocity = move_and_slide(velocity, Vector3.ZERO, true, 4, deg2rad(MAX_SLOPE_ANGLE))
 
 	if multiplayer.is_network_server():

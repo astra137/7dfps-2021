@@ -10,6 +10,12 @@ radius = 0.4
 
 [node name="Player" type="KinematicBody" groups=["player"]]
 script = ExtResource( 1 )
+max_speed = 25.0
+acceleration_period = 1.5
+deceleration_period = 1.5
+acceleration_curve = 0.0490366
+deceleration_curve = 1.0
+max_delta_velocity = 1.2
 delta_score_rate = 200.0
 stare_angle_tolerance = 13.0
 

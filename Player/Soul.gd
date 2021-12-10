@@ -60,9 +60,9 @@ func _input(event):
 	if Input.is_action_pressed("movement_right"):
 		move_dir.x += 1
 	if Input.is_action_pressed("movement_up"):
-		move_dir.y += 1
+		move_dir += Vector3.UP.rotated(Vector3.RIGHT, look_pitch * (PI/180))
 	if Input.is_action_pressed("movement_down"):
-		move_dir.y -= 1
+		move_dir += Vector3.DOWN.rotated(Vector3.RIGHT, look_pitch * (PI/180))
 
 	debug_input_count += 1
 	rpc_unreliable("set_intent", move_dir, look_pitch, look_yaw)

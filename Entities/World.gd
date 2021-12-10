@@ -1,4 +1,6 @@
-extends Spatial
+extends Node
+
+export(float, 0.0, 0.5) var mouse_sensitivity := 0.05
 
 export(int) var maximum_score := 5000
 
@@ -34,18 +36,10 @@ func _process(_delta):
 
 
 
-puppetsync func end_round(scores):
-	# Find victor
-	var victor = get_highest_scoring_player(scores)
+func _physics_process(_delta):
+	pass
 
-	# Let players know the round is over
-	var players = get_tree().get_nodes_in_group("player")
-	for player in players:
-		player.round_ended(str(victor[0]))
 
-	# Stop round timer and start post round timer
-	round_timer.stop()
-	post_round_timer.start()
 
 
 
@@ -72,3 +66,21 @@ func _on_PostRoundTimer_timeout():
 		# Start round timer
 		round_timer.start()
 		post_round_timer.stop()
+
+
+#
+#
+#
+
+puppetsync func end_round(scores):
+	# Find victor
+	var victor = get_highest_scoring_player(scores)
+
+	# Let players know the round is over
+	var players = get_tree().get_nodes_in_group("player")
+	for player in players:
+		player.round_ended(str(victor[0]))
+
+	# Stop round timer and start post round timer
+	round_timer.stop()
+	post_round_timer.start()

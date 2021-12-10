@@ -1,6 +1,6 @@
 [gd_resource type="Theme" load_steps=8 format=2]
 
-[ext_resource path="res://Font/MainFont.tres" type="DynamicFont" id=3]
+[ext_resource path="res://UI/Theme/montserrat.tres" type="DynamicFont" id=1]
 
 [sub_resource type="StyleBoxFlat" id=6]
 bg_color = Color( 0.0823529, 0.0823529, 0.0823529, 0.858824 )
@@ -21,14 +21,12 @@ bg_color = Color( 0.270588, 0.270588, 0.270588, 0.313726 )
 bg_color = Color( 1, 1, 1, 1 )
 
 [resource]
-Button/fonts/font = ExtResource( 3 )
+default_font = ExtResource( 1 )
 Button/styles/hover = SubResource( 6 )
 Button/styles/normal = SubResource( 7 )
 Button/styles/pressed = SubResource( 8 )
-Label/fonts/font = ExtResource( 3 )
-LineEdit/fonts/font = ExtResource( 3 )
 LineEdit/styles/normal = SubResource( 9 )
-ProgressBar/colors/font_color = Color( 0.94, 0.94, 0.94, 1 )
+ProgressBar/colors/font_color = Color( 0, 0, 0, 1 )
 ProgressBar/colors/font_color_shadow = Color( 0, 0, 0, 1 )
 ProgressBar/styles/bg = SubResource( 10 )
 ProgressBar/styles/fg = SubResource( 11 )

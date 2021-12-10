@@ -6,6 +6,8 @@ var move_dir := Vector3.ZERO
 var look_pitch := 0.0
 var look_yaw := 0.0
 
+var debug_input_count := 0
+
 puppetsync func set_intent(move: Vector3, pitch: float, yaw: float):
 	move_dir = move
 	look_pitch = pitch
@@ -62,4 +64,5 @@ func _input(event):
 	if Input.is_action_pressed("movement_down"):
 		move_dir.y -= 1
 
+	debug_input_count += 1
 	rpc_unreliable("set_intent", move_dir, look_pitch, look_yaw)

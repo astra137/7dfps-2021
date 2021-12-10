@@ -21,7 +21,7 @@ _global_script_class_icons={
 [application]
 
 config/name="7dfps-2021"
-run/main_scene="res://UI/Entry.tscn"
+run/main_scene="res://UI/Main.tscn"
 config/icon="res://icon.png"
 
 [autoload]
@@ -32,6 +32,16 @@ Helpers="*res://Helpers.gd"
 [display]
 
 window/dpi/allow_hidpi=true
+window/vsync/use_vsync=false
+
+[global]
+
+war=false
+
+[gui]
+
+theme/use_hidpi=true
+theme/custom="res://UI/Theme/ui_theme.tres"
 
 [input]
 

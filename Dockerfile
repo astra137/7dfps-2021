@@ -5,12 +5,12 @@ RUN mkdir ~/.cache && mkdir -p ~/.config/godot
 
 FROM godotimages/godot:3.4 as build
 COPY . /build
-RUN godot --path /build --export-pack Docker game.pck
+RUN godot --path /build --export-pack Server server.pck
 
 FROM godot-server as app
 LABEL org.opencontainers.image.source=https://github.com/astra137/7dfps-2021
 EXPOSE 10567/udp
 RUN apk add --no-cache tini
-COPY --from=build /build/game.pck /app/
-CMD [ "godot", "--main-pack", "/app/game.pck" ]
+COPY --from=build /build/server.pck /app/
+CMD [ "godot", "--main-pack", "/app/server.pck" ]
 ENTRYPOINT [ "tini", "--" ]

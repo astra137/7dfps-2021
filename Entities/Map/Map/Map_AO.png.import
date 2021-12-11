@@ -2,28 +2,26 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/Map_AO.png-253c3c00aff4ce0c2615cbcb8ba2effe.s3tc.stex"
-path.etc2="res://.import/Map_AO.png-253c3c00aff4ce0c2615cbcb8ba2effe.etc2.stex"
+path="res://.import/Map_AO.png-253c3c00aff4ce0c2615cbcb8ba2effe.stex"
 metadata={
-"imported_formats": [ "s3tc", "etc2" ],
-"vram_texture": true
+"vram_texture": false
 }
 
 [deps]
 
 source_file="res://Entities/Map/Map/Map_AO.png"
-dest_files=[ "res://.import/Map_AO.png-253c3c00aff4ce0c2615cbcb8ba2effe.s3tc.stex", "res://.import/Map_AO.png-253c3c00aff4ce0c2615cbcb8ba2effe.etc2.stex" ]
+dest_files=[ "res://.import/Map_AO.png-253c3c00aff4ce0c2615cbcb8ba2effe.stex" ]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=true
+flags/repeat=0
 flags/filter=true
-flags/mipmaps=true
+flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2
 process/fix_alpha_border=true

@@ -2,28 +2,26 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/Crate_Normal.png-483ca1f5f89ff744e1db4be0bc383cfb.s3tc.stex"
-path.etc2="res://.import/Crate_Normal.png-483ca1f5f89ff744e1db4be0bc383cfb.etc2.stex"
+path="res://.import/Crate_Normal.png-483ca1f5f89ff744e1db4be0bc383cfb.stex"
 metadata={
-"imported_formats": [ "s3tc", "etc2" ],
-"vram_texture": true
+"vram_texture": false
 }
 
 [deps]
 
 source_file="res://Entities/Map/Crate/Crate_Normal.png"
-dest_files=[ "res://.import/Crate_Normal.png-483ca1f5f89ff744e1db4be0bc383cfb.s3tc.stex", "res://.import/Crate_Normal.png-483ca1f5f89ff744e1db4be0bc383cfb.etc2.stex" ]
+dest_files=[ "res://.import/Crate_Normal.png-483ca1f5f89ff744e1db4be0bc383cfb.stex" ]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=1
-flags/repeat=true
+flags/repeat=0
 flags/filter=true
-flags/mipmaps=true
+flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2
 process/fix_alpha_border=true

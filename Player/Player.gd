@@ -48,8 +48,6 @@ onready var omnilight: OmniLight = $Head/OmniLight
 
 
 
-
-
 func get_is_me():
 	return control.is_network_master()
 
@@ -236,7 +234,7 @@ puppetsync func respawn(to: Vector3):
 
 puppetsync func round_ended(victor: String):
 	if get_is_me():
-	# Disable movement
+		# Disable movement
 		pass
 
 		# Show scoreboard

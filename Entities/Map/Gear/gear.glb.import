@@ -2,12 +2,12 @@
 
 importer="scene"
 type="PackedScene"
-path="res://.import/full_test.glb-2650dd7b50ffdb0ba2296160966ded4a.scn"
+path="res://.import/gear.glb-fba2114b62142e2347a8c81429f475a4.scn"
 
 [deps]
 
-source_file="res://Entities/Map/full_test.glb"
-dest_files=[ "res://.import/full_test.glb-2650dd7b50ffdb0ba2296160966ded4a.scn" ]
+source_file="res://Entities/Map/Gear/gear.glb"
+dest_files=[ "res://.import/gear.glb-fba2114b62142e2347a8c81429f475a4.scn" ]
 
 [params]
 

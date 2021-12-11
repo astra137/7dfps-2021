@@ -67,7 +67,7 @@ func _network_peer_connected(id):
 
 		# Assume new peers want to play
 		var spawn_points = world.get_node("SpawnPoints").get_children()
-		var at = spawn_points[rng.randi_range(0, players.size())].transform.origin
+		var at = spawn_points[rng.randi_range(0, spawn_points.size() - 1)].transform.origin
 		rpc("player_join", id, at, Vector3.ZERO)
 
 func _network_peer_disconnected(id):

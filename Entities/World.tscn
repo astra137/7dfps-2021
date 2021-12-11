@@ -8,6 +8,7 @@
 [ext_resource path="res://Entities/Map/Cup/cup.tscn" type="PackedScene" id=6]
 [ext_resource path="res://Entities/Map/Crate/crate.tscn" type="PackedScene" id=7]
 
+
 [sub_resource type="Environment" id=1]
 fog_enabled = true
 fog_color = Color( 0.501961, 0.6, 0.701961, 1 )

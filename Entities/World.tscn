@@ -78,7 +78,7 @@ transform = Transform( -0.174462, 0.322398, -0.930389, -0.803397, 0.499703, 0.32
 transform = Transform( 0.753332, 0.635899, 0.167697, -0.317833, 0.128805, 0.939357, 0.575737, -0.760949, 0.299143, 6.8789, 2.64394, -8.29092 )
 
 [node name="crate20" parent="Static/gear" instance=ExtResource( 7 )]
-transform = Transform( -0.228336, 0.664762, -0.711305, 0.0837739, 0.74131, 0.665913, 0.969972, 0.0924621, -0.224958, -3.77067, 1.72046, -3.79335 )
+transform = Transform( -0.228336, 0.664762, -0.711305, 0.0837739, 0.74131, 0.665913, 0.969972, 0.0924621, -0.224958, -3.91893, 3.43023, -3.79335 )
 
 [node name="crate21" parent="Static/gear" instance=ExtResource( 7 )]
 transform = Transform( -0.0419398, 0.974649, 0.21977, 0.239576, -0.203736, 0.949261, 0.969972, 0.0924621, -0.224958, -8.18798, 2.61812, 4.65256 )
@@ -148,7 +148,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.43606, 0, 63.029 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -87.346, 0, 0 )
 
 [node name="3" type="Spatial" parent="SpawnPoints"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -44.9483, -11.4496 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -24.4202, -11.4496 )
 
 [node name="4" type="Spatial" parent="SpawnPoints"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10.9948, -62.6127 )
@@ -163,7 +163,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -71.0088, -3.51379, -50.9316 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -25.5893, -8.18583, -62.4865 )
 
 [node name="8" type="Spatial" parent="SpawnPoints"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.103938, 14.09, -80.1888 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.99527, 14.09, -80.1888 )
 
 [node name="9" type="Spatial" parent="SpawnPoints"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 68.6353, 3.20533, 43.9469 )

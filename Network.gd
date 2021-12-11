@@ -9,7 +9,6 @@ signal player_changed()
 
 var world_scene = preload("res://Entities/World.tscn")
 var player_scene = preload("res://Player/Player.tscn")
-var controls_scene = preload("res://UI/Controls.tscn")
 
 var world
 var peer

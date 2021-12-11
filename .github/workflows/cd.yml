@@ -19,7 +19,7 @@ jobs:
         key: ${{ secrets.KEY }}
         script: |
           cd ~/7dfps-2021
-          git reset --hard && git pull
+          git fetch --all && git reset --hard origin/main
           godot --export-pack Server server.pck
           docker build -f server.dockerfile -t fps .
           docker stop fps || true

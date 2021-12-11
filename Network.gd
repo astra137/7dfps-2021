@@ -50,7 +50,8 @@ puppetsync func player_join(player_id: int, pos: Vector3, vel: Vector3):
 	world.get_node("Players").add_child(player)
 	player.post_player_join(player_id, pos, vel)
 	players.append(player_id)
-	world.rpc_id(player_id, "time_left", world.get_node("RoundTimer").time_left)
+	if not world.is_network_master():
+		world.rpc_id(player_id, "time_left", world.get_node("RoundTimer").time_left)
 
 
 puppetsync func player_leave(player_id: int):

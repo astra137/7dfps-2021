@@ -55,7 +55,6 @@ margin_bottom = 75.0
 rect_min_size = Vector2( 600, 40 )
 mouse_filter = 2
 max_value = 5000.0
-value = 1000.0
 percent_visible = false
 
 [node name="LeftPadding2" type="MarginContainer" parent="VerticalElements/TopRow"]
@@ -81,16 +80,15 @@ margin_right = 904.0
 margin_bottom = 26.0
 
 [node name="LeftPadding" type="MarginContainer" parent="Timer/TopRow"]
-margin_right = 863.0
+margin_right = 900.0
 margin_bottom = 26.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="TimeLabel" type="Label" parent="Timer/TopRow"]
-margin_left = 867.0
+margin_left = 904.0
 margin_right = 904.0
 margin_bottom = 26.0
-text = "2:15"
 script = ExtResource( 5 )
 
 [node name="MarginSpace" type="MarginContainer" parent="Timer"]
@@ -169,3 +167,5 @@ margin_left = 204.0
 margin_right = 264.0
 margin_bottom = 26.0
 text = "Score"
+
+[connection signal="visibility_changed" from="ScoreboardBackground" to="ScoreboardBackground/ScoreboardMargin/Scoreboard/ScoreboardTable" method="_on_ScoreboardBackground_visibility_changed"]

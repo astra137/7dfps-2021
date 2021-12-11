@@ -17,8 +17,12 @@ func get_highest_scoring_player(scores):
 			highest = score
 	return highest
 
+
+
 func _ready():
 	rng.randomize()
+
+
 
 func _process(_delta):
 	if is_network_master():

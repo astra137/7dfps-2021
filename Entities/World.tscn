@@ -8,7 +8,6 @@
 [ext_resource path="res://Entities/Map/Cup/cup.tscn" type="PackedScene" id=6]
 [ext_resource path="res://Entities/Map/Crate/crate.tscn" type="PackedScene" id=7]
 
-
 [sub_resource type="Environment" id=1]
 fog_enabled = true
 fog_color = Color( 0.501961, 0.6, 0.701961, 1 )
@@ -140,16 +139,16 @@ transform = Transform( 0.774173, -0.628364, -0.0762673, 0.612709, 0.774173, -0.1
 [node name="SpawnPoints" type="Spatial" parent="."]
 
 [node name="0" type="Spatial" parent="SpawnPoints"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5.62975, -63.9535 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -7.51405, -63.9535 )
 
 [node name="1" type="Spatial" parent="SpawnPoints"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 62.9575 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.43606, 0, 63.029 )
 
 [node name="2" type="Spatial" parent="SpawnPoints"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -87.346, 0, 0 )
 
 [node name="3" type="Spatial" parent="SpawnPoints"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -38.0748, -11.4496 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -44.9483, -11.4496 )
 
 [node name="4" type="Spatial" parent="SpawnPoints"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10.9948, -62.6127 )
@@ -161,10 +160,10 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -51.4921, -20.5063, 54.7496 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -71.0088, -3.51379, -50.9316 )
 
 [node name="7" type="Spatial" parent="SpawnPoints"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -25.5893, -7.93429, -62.4865 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -25.5893, -8.18583, -62.4865 )
 
 [node name="8" type="Spatial" parent="SpawnPoints"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.596737, 14.09, -80.1888 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.103938, 14.09, -80.1888 )
 
 [node name="9" type="Spatial" parent="SpawnPoints"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 68.6353, 3.20533, 43.9469 )

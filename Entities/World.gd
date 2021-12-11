@@ -72,6 +72,9 @@ func _on_PostRoundTimer_timeout():
 #
 #
 
+func claim_controls():
+	pass
+
 puppetsync func end_round(scores):
 	# Find victor
 	var victor = get_highest_scoring_player(scores)

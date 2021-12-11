@@ -46,12 +46,10 @@ func _connected_to_server():
 	get_tree().get_root().add_child(world)
 	emit_signal("connected")
 
-
 func _connection_failed():
 	print("_connection_failed")
 	multiplayer.set_network_peer(null)
 	emit_signal("disconnected", "_connection_failed")
-
 
 func _server_disconnected():
 	print("_server_disconnected")
@@ -72,12 +70,10 @@ func _network_peer_connected(id):
 		var at = spawn_points[rng.randi_range(0, players.size())].transform.origin
 		rpc("player_join", id, at, Vector3.ZERO)
 
-
 func _network_peer_disconnected(id):
 	print("_network_peer_disconnected", id)
 	if multiplayer.is_network_server():
 		rpc("player_leave", id)
-
 
 #
 # Lobby
@@ -90,7 +86,6 @@ puppetsync func player_join(player_id: int):
 	# player.post_player_join(player_id, pos, vel)
 	players.append(player_id)
 	emit_signal("player_changed")
-
 
 puppetsync func player_leave(player_id: int):
 	print("player_leave:", player_id)
@@ -112,7 +107,6 @@ func host_game(local_player: bool):
 		if local_player: _network_peer_connected(1)
 	else:
 		emit_signal("disconnected", "create_server failed")
-
 
 func join_game(address: String):
 	print("join_game address=", address)

@@ -73,6 +73,7 @@ wait_time = 10.0
 
 [node name="RoundTimer" type="Timer" parent="."]
 wait_time = 300.0
+one_shot = true
 autostart = true
 
 [node name="Camera" type="Camera" parent="."]
@@ -81,4 +82,4 @@ near = 0.1
 far = 8192.0
 
 [connection signal="timeout" from="PostRoundTimer" to="." method="_on_PostRoundTimer_timeout"]
-[connection signal="timeout" from="RoundTimer" to="." method="end_round"]
+[connection signal="timeout" from="RoundTimer" to="." method="round_timer_ended"]

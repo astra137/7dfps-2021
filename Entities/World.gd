@@ -29,14 +29,20 @@ func _process(_delta):
 		rset("player_scores", player_scores_temp)
 
 		if not player_scores_temp.empty() and get_highest_scoring_player(player_scores_temp)[1] >= maximum_score and post_round_timer.is_stopped():
-			rpc("end_round", player_scores)
+			rpc("end_round")
 
 
 
+func round_timer_ended():
+	print("timer ended")
+	if is_network_master():
+		rpc("end_round")
 
-puppetsync func end_round(scores):
+
+
+puppetsync func end_round():
 	# Find victor
-	var victor = get_highest_scoring_player(scores)
+	var victor = get_highest_scoring_player(player_scores)
 
 	# Let players know the round is over
 	var players = get_tree().get_nodes_in_group("player")
@@ -70,5 +76,11 @@ func _on_PostRoundTimer_timeout():
 			player.rpc("respawn", spawn_points.pop_at(index))
 
 		# Start round timer
-		round_timer.start()
 		post_round_timer.stop()
+		round_timer.start()
+		rpc("time_left", round_timer.time_left)
+	
+puppet func time_left(time_left: float):
+	var wait_time = round_timer.wait_time
+	round_timer.start(time_left)
+	round_timer.wait_time = wait_time

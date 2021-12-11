@@ -50,6 +50,7 @@ puppetsync func player_join(player_id: int, pos: Vector3, vel: Vector3):
 	world.get_node("Players").add_child(player)
 	player.post_player_join(player_id, pos, vel)
 	players.append(player_id)
+	world.rpc_id(player_id, "time_left", world.get_node("RoundTimer").time_left)
 
 
 puppetsync func player_leave(player_id: int):
@@ -83,7 +84,7 @@ func _network_peer_connected(id):
 
 		# Assume new peers want to play
 		var spawn_points = world.get_node("SpawnPoints").get_children()
-		var at = spawn_points[rng.randi_range(0, players.size())].transform.origin
+		var at = spawn_points[rng.randi_range(0, spawn_points.size() - 1)].transform.origin
 		rpc("player_join", id, at, Vector3.ZERO)
 
 

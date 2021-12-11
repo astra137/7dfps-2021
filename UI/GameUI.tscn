@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://UI/Theme/ui_theme.tres" type="Theme" id=1]
 [ext_resource path="res://Font/Montserrat-Bold.ttf" type="DynamicFontData" id=2]
 [ext_resource path="res://UI/Theme/ScoreboardBackground.png" type="Texture" id=3]
 [ext_resource path="res://UI/Scoreboard.gd" type="Script" id=4]
+[ext_resource path="res://UI/TimeLabel.gd" type="Script" id=5]
 
 [sub_resource type="DynamicFont" id=1]
 size = 24
@@ -66,6 +67,34 @@ size_flags_vertical = 3
 
 [node name="MarginSpace" type="MarginContainer" parent="VerticalElements"]
 margin_top = 79.0
+margin_right = 904.0
+margin_bottom = 480.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Timer" type="VBoxContainer" parent="."]
+margin_right = 904.0
+margin_bottom = 480.0
+
+[node name="TopRow" type="HBoxContainer" parent="Timer"]
+margin_right = 904.0
+margin_bottom = 26.0
+
+[node name="LeftPadding" type="MarginContainer" parent="Timer/TopRow"]
+margin_right = 863.0
+margin_bottom = 26.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TimeLabel" type="Label" parent="Timer/TopRow"]
+margin_left = 867.0
+margin_right = 904.0
+margin_bottom = 26.0
+text = "2:15"
+script = ExtResource( 5 )
+
+[node name="MarginSpace" type="MarginContainer" parent="Timer"]
+margin_top = 30.0
 margin_right = 904.0
 margin_bottom = 480.0
 size_flags_horizontal = 3

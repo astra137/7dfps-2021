@@ -1,10 +1,18 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=9 format=2]
 
-[ext_resource path="res://Entities/Map/full_test.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Entities/Map/Map/map.tscn" type="PackedScene" id=1]
 [ext_resource path="res://UI/GameUI.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Entities/World.gd" type="Script" id=3]
+[ext_resource path="res://Entities/Map/Gear/gear.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Entities/Map/Angel/angel.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Entities/Map/Cup/cup.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Entities/Map/Crate/crate.tscn" type="PackedScene" id=7]
 
 [sub_resource type="Environment" id=1]
+fog_enabled = true
+fog_color = Color( 0.501961, 0.6, 0.701961, 1 )
+fog_sun_color = Color( 1, 0.901961, 0.701961, 1 )
+fog_depth_end = 600.0
 glow_enabled = true
 glow_bloom = 0.1
 glow_blend_mode = 1
@@ -16,7 +24,115 @@ script = ExtResource( 3 )
 
 [node name="Static" type="Spatial" parent="."]
 
-[node name="full_test" parent="Static" instance=ExtResource( 1 )]
+[node name="map" parent="Static" instance=ExtResource( 1 )]
+
+[node name="gear" parent="Static" instance=ExtResource( 4 )]
+transform = Transform( 3.98505, 0.345563, 0, -0.345563, 3.98505, 0, 0, 0, 4, 17.2799, -38.0732, -17.1185 )
+
+[node name="gear2" parent="Static/gear" instance=ExtResource( 4 )]
+transform = Transform( 0.381717, 0.321796, 0.0272059, 0.0900278, -0.0655819, -0.487436, -0.31014, 0.377023, -0.108009, -12.4435, 4.9774, 0.128475 )
+
+[node name="gear3" parent="Static/gear" instance=ExtResource( 4 )]
+transform = Transform( 0.360833, 0.265973, 0.221489, 0.230013, 0.0548237, -0.440554, -0.258637, 0.419825, -0.0827902, -13.8692, 2.76148, -2.26095 )
+
+[node name="gear4" parent="Static/gear" instance=ExtResource( 4 )]
+transform = Transform( 0.360833, 0.265973, 0.221489, 0.230013, 0.0548237, -0.440554, -0.258637, 0.419825, -0.0827902, -13.8692, 2.76148, -2.26095 )
+
+[node name="cup" parent="Static/gear" instance=ExtResource( 6 )]
+transform = Transform( -0.0575042, 0.166771, -0.177145, -0.230418, -0.0957667, -0.0153611, -0.0781057, 0.159737, 0.175737, -14.2854, 12.0339, 0.134725 )
+
+[node name="cup2" parent="Static/gear" instance=ExtResource( 6 )]
+transform = Transform( 0.080586, 0.236114, -0.0159922, -0.236448, 0.0796251, -0.0158727, -0.00989741, 0.0202418, 0.248983, -4.93732, 4.82547, -6.70895 )
+
+[node name="cup3" parent="Static/gear" instance=ExtResource( 6 )]
+transform = Transform( -0.11662, -0.0214818, 0.220087, 0.176562, -0.158851, 0.0780524, 0.133137, 0.191846, 0.0892727, -2.66023, 5.1511, -8.90257 )
+
+[node name="crate17" parent="Static/gear" instance=ExtResource( 7 )]
+transform = Transform( 1.54107, 0.996383, -0.79518, -0.384889, -0.825655, -1.78049, -1.2153, 1.52496, -0.444449, -0.827901, 6.67359, 3.63858 )
+
+[node name="crate23" parent="Static/gear" instance=ExtResource( 7 )]
+transform = Transform( -0.625946, 0.556511, -0.54634, -0.774322, -0.360112, 0.520332, 0.0928269, 0.748742, 0.656329, -16.3307, 1.90399, 8.59422 )
+
+[node name="crate24" parent="Static/gear" instance=ExtResource( 7 )]
+transform = Transform( -0.625946, 0.556511, -0.54634, -0.774322, -0.360112, 0.520332, 0.0928269, 0.748742, 0.656329, -14.3661, 4.5135, -16.8242 )
+
+[node name="crate25" parent="Static/gear" instance=ExtResource( 7 )]
+transform = Transform( 0.340458, 0.2166, -0.295251, -0.363228, 0.250859, -0.234809, 0.0464135, 0.374371, 0.328165, -9.21157, 3.58171, -18.3605 )
+
+[node name="crate26" parent="Static/gear" instance=ExtResource( 7 )]
+transform = Transform( 0.442308, -0.0328301, 0.230838, 0.0333872, 0.498835, 0.00697123, -0.230759, 0.00924675, 0.44347, -9.57983, 7.82841, -18.3605 )
+
+[node name="crate27" parent="Static/gear" instance=ExtResource( 7 )]
+transform = Transform( -0.0922735, -0.351869, 0.343036, 0.276511, 0.251356, 0.332207, -0.406237, 0.251014, 0.148204, 1.98889, 8.83159, -20.8097 )
+
+[node name="crate28" parent="Static/gear" instance=ExtResource( 7 )]
+transform = Transform( 0.440855, -0.163684, -0.169868, 0.110632, -0.174534, 0.455301, -0.208347, -0.439028, -0.117671, -6.84214, 11.8799, -20.8097 )
+
+[node name="crate18" parent="Static/gear" instance=ExtResource( 7 )]
+transform = Transform( -0.206451, -0.00526069, -0.455357, -0.39891, -0.23907, 0.183621, -0.219657, 0.43911, 0.0945161, 2.10115, 1.94002, -4.75349 )
+
+[node name="crate19" parent="Static/gear" instance=ExtResource( 7 )]
+transform = Transform( -0.174462, 0.322398, -0.930389, -0.803397, 0.499703, 0.323807, 0.569313, 0.803963, 0.171834, 6.8789, 2.64394, 1.11757 )
+
+[node name="crate22" parent="Static/gear" instance=ExtResource( 7 )]
+transform = Transform( 0.753332, 0.635899, 0.167697, -0.317833, 0.128805, 0.939357, 0.575737, -0.760949, 0.299143, 6.8789, 2.64394, -8.29092 )
+
+[node name="crate20" parent="Static/gear" instance=ExtResource( 7 )]
+transform = Transform( -0.228336, 0.664762, -0.711305, 0.0837739, 0.74131, 0.665913, 0.969972, 0.0924621, -0.224958, -3.77067, 1.72046, -3.79335 )
+
+[node name="crate21" parent="Static/gear" instance=ExtResource( 7 )]
+transform = Transform( -0.0419398, 0.974649, 0.21977, 0.239576, -0.203736, 0.949261, 0.969972, 0.0924621, -0.224958, -8.18798, 2.61812, 4.65256 )
+
+[node name="angel" parent="Static" instance=ExtResource( 5 )]
+transform = Transform( 0.366025, -0.366025, 1.93185, 1.01247, 1.71958, 0.133975, -1.6855, 0.953454, 0.5, 14, -22, 49.5713 )
+
+[node name="crate" parent="Static/angel" instance=ExtResource( 7 )]
+transform = Transform( 1.0335, 1.63954, 0.493763, -1.70652, 1.0335, 0.140211, -0.140211, -0.493763, 1.93301, -10.1711, 1.53019, -7.37619 )
+
+[node name="crate6" parent="Static/angel" instance=ExtResource( 7 )]
+transform = Transform( 0.0270807, 1.99959, -0.0305807, -0.696657, -0.0192352, -1.87464, -1.87455, 0.0360395, 0.696255, -2.10181, 6.65497, 8.46713 )
+
+[node name="crate8" parent="Static/angel" instance=ExtResource( 7 )]
+transform = Transform( -1.58901, 0.196302, 1.19855, -1.20702, -0.47416, -1.52258, 0.134715, -1.93304, 0.495193, 0.028141, 4.76748, 16.5967 )
+
+[node name="crate14" parent="Static/angel" instance=ExtResource( 7 )]
+transform = Transform( -0.289097, 1.16937, -0.893871, 1.25196, -0.283646, -0.775978, -0.773963, -0.895617, -0.921332, 1.67916, 3.11645, 25.3107 )
+
+[node name="crate10" parent="Static/angel" instance=ExtResource( 7 )]
+transform = Transform( -0.0534573, 0.305008, 0.392572, -0.336896, -0.312572, 0.196976, 0.365572, -0.243452, 0.23893, 10.2097, 2.19212, 31.4255 )
+
+[node name="crate13" parent="Static/angel" instance=ExtResource( 7 )]
+transform = Transform( 1.32566, 1.13002, 0.982702, 1.18344, 0.0137224, -1.61223, -0.917665, 1.65012, -0.65955, 34.8087, -7.75496, 19.1459 )
+
+[node name="crate16" parent="Static/angel" instance=ExtResource( 7 )]
+transform = Transform( 1.58242, 1.11989, -0.491741, -0.133346, -0.641335, -1.88968, -1.2158, 1.52792, -0.432758, 37.6123, -13.6112, 27.673 )
+
+[node name="crate15" parent="Static/angel" instance=ExtResource( 7 )]
+transform = Transform( 0.577954, 0.741381, -0.341066, 0.751203, -0.646614, -0.132603, -0.318845, -0.179572, -0.930639, 28.1129, -6.78158, 26.3331 )
+
+[node name="crate7" parent="Static/angel" instance=ExtResource( 7 )]
+transform = Transform( 0.267345, 1.28911, 0.71884, -1.28737, 0.560985, -0.527236, -0.721948, -0.522972, 1.20635, -6.31107, 5.03452, 12.8593 )
+
+[node name="crate3" parent="Static/angel" instance=ExtResource( 7 )]
+transform = Transform( 0.313452, 1.83436, 2.35306, -2.90318, -0.358047, 0.665855, 0.687972, -2.34668, 1.73774, -10.6502, 1.43153, -14.5558 )
+
+[node name="crate12" parent="Static/angel" instance=ExtResource( 7 )]
+transform = Transform( -1.57519, 0.887086, -0.85548, -0.49203, -1.72557, -0.88335, -1.1299, -0.485263, 1.57729, 14.5851, -1.22062, -4.75564 )
+
+[node name="crate11" parent="Static/angel" instance=ExtResource( 7 )]
+transform = Transform( 1.43874, 3.70582, -0.443753, 0.362694, -0.612153, -3.93621, -3.71463, 1.37556, -0.556202, -14.3792, 15.0457, -11.2698 )
+
+[node name="crate2" parent="Static/angel" instance=ExtResource( 7 )]
+transform = Transform( 1.49892, 0.0559357, 0.0108039, -0.0560107, 1.49892, 0.0104067, -0.0104086, -0.0108024, 1.49992, -7.63416, 8.917, -0.692284 )
+
+[node name="crate5" parent="Static/angel" instance=ExtResource( 7 )]
+transform = Transform( 0.936625, -0.596292, -0.676144, -0.0234271, 0.95858, -0.877825, 0.901212, 0.64464, 0.679892, -11.8221, 6.89594, 5.0535 )
+
+[node name="crate9" parent="Static/angel" instance=ExtResource( 7 )]
+transform = Transform( 1.1969, 0.338393, 0.378056, -0.107177, 1.11541, -0.659071, -0.495931, 0.57563, 1.05485, -4.91273, -5.16999, 1.45828 )
+
+[node name="crate4" parent="Static/angel" instance=ExtResource( 7 )]
+transform = Transform( 0.774173, -0.628364, -0.0762673, 0.612709, 0.774173, -0.158876, 0.158875, 0.0762687, 0.984348, -15.3535, 6.01878, 0.221162 )
 
 [node name="Players" type="Spatial" parent="."]
 

@@ -37,7 +37,7 @@ far = 8192.0
 transform = Transform( -0.2, 0, -1.74846e-08, 0, 0.2, 0, 1.74846e-08, 0, -0.2, 0, 0, -0.1 )
 
 [node name="StareTimer" type="Timer" parent="."]
-wait_time = 1.75
+wait_time = 1.39
 one_shot = true
 
 [connection signal="timeout" from="StareTimer" to="." method="_on_StareTimer_timeout"]

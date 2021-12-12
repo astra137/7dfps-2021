@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Entities/Map/Map/map.tscn" type="PackedScene" id=1]
 [ext_resource path="res://UI/GameUI.tscn" type="PackedScene" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://Entities/Map/Angel/angel.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Entities/Map/Cup/cup.tscn" type="PackedScene" id=6]
 [ext_resource path="res://Entities/Map/Crate/crate.tscn" type="PackedScene" id=7]
+[ext_resource path="res://Game Music.wav" type="AudioStream" id=8]
 
 [sub_resource type="Environment" id=1]
 fog_enabled = true
@@ -196,6 +197,11 @@ autostart = true
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 40 )
 near = 0.1
 far = 8192.0
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 8 )
+volume_db = -10.0
+autoplay = true
 
 [connection signal="timeout" from="PostRoundTimer" to="." method="_on_PostRoundTimer_timeout"]
 [connection signal="timeout" from="RoundTimer" to="." method="round_timer_ended"]

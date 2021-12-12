@@ -21,6 +21,7 @@ export(float, 0.0, 0.5) var mouse_sensitivity := 0.05
 export(int, 0, 1000) var initial_burst_score := 500
 export(float, 0.0, 500.0) var delta_score_rate := 80.0
 export(float, 0.0, 90.0) var stare_angle_tolerance := 20.0
+export(float, 0.0, 1.0) var max_vignette_opacity := 70.0 / 255.0
 
 
 # Server-set values for this player's kinematics
@@ -39,12 +40,11 @@ puppetsync var score := 0
 onready var control := $Control
 onready var camera: Camera = $Head/Camera
 onready var rotation_helper: Spatial = $Head
-onready var score_bar: ProgressBar = get_tree().get_root().get_node("World/GameUI/VerticalElements/TopRow/ScoreElements/Score")
-onready var score_board := get_tree().get_root().get_node("World/GameUI/ScoreboardBackground")
-onready var victor_area := get_tree().get_root().get_node("World/GameUI/ScoreboardBackground/ScoreboardMargin/Scoreboard/VictorArea")
+onready var score_bar: ProgressBar = get_tree().get_root().get_node("World/GameUI/Margin/VerticalElements/TopRow/ScoreElements/Score")
+onready var score_board := get_tree().get_root().get_node("World/GameUI/Margin/ScoreboardBackground")
+onready var victor_area := get_tree().get_root().get_node("World/GameUI/Margin/ScoreboardBackground/ScoreboardMargin/Scoreboard/VictorArea")
 onready var stare_timer: Timer = $StareTimer
-onready var spotlight: SpotLight = $Head/SpotLight
-onready var omnilight: OmniLight = $Head/OmniLight
+onready var vignette: TextureRect = get_tree().get_root().get_node("World/GameUI/Vignette")
 
 
 
@@ -77,10 +77,9 @@ func _ready():
 	# Choose a random color for the player
 	var rng = RandomNumberGenerator.new()
 	rng.randomize()
-	var hue = rng.randf_range(0, 1.0)
-	spotlight.light_color = Color.from_hsv(hue, 1.0, 1.0, 1.0)
-	omnilight.light_color = Color.from_hsv(hue, 1.0, 1.0, 1.0)
-	print(ease(20, 1.0))
+#	var hue = rng.randf_range(0, 1.0)
+#	spotlight.light_color = Color.from_hsv(hue, 1.0, 1.0, 1.0)
+#	omnilight.light_color = Color.from_hsv(hue, 1.0, 1.0, 1.0)
 
 
 func _process(delta):
@@ -126,6 +125,7 @@ func _physics_process(delta):
 
 	if multiplayer.is_network_server():
 		process_stare(delta)
+	
 
 
 # Handles staring mechanics.
@@ -170,7 +170,8 @@ func process_stare(delta):
 	staring_at = [] + staring_at_temp
 
 	for player in stared_by:
-		staring_at_temp.erase(player)
+		if staring_at_temp.has(player):
+			staring_at_temp.erase(player)
 
 	if not staring_at_temp.empty():
 		match state:
@@ -186,6 +187,17 @@ func process_stare(delta):
 				stare_timer.stop()
 				state = PlayerState.IDLE
 				print("Idle")
+	
+	var stared_by_temp = [] + stared_by
+
+	for player in staring_at:
+		if stared_by_temp.has(player):
+			stared_by_temp.erase(player)
+
+	if stared_by_temp.empty():
+		rpc_id(int(name), "remove_vignette")			
+	else:
+		rpc_id(int(name), "apply_vignette", delta)
 
 
 
@@ -243,3 +255,17 @@ puppetsync func round_ended(victor: String):
 		# Show victor label
 		victor_area.visible = true
 		victor_area.get_node("Victor/Name").text = victor
+
+
+
+puppetsync func apply_vignette(delta: float):
+	vignette.visible = true
+	var new_opacity = clamp(vignette.modulate.a + (delta * (max_vignette_opacity / stare_timer.wait_time)), 0.0, max_vignette_opacity)
+	print(vignette.modulate.a, new_opacity)
+	vignette.set_modulate(Color.from_hsv(1.0, 1.0, 1.0, new_opacity))
+
+
+
+puppetsync func remove_vignette():
+	vignette.visible = false
+	vignette.modulate = Color.from_hsv(1.0, 1.0, 1.0, 0.0)

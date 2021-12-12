@@ -28,22 +28,6 @@ shape = SubResource( 4 )
 
 [node name="Head" type="Spatial" parent="."]
 
-[node name="SpotLight" type="SpotLight" parent="Head"]
-visible = false
-light_energy = 0.01
-light_indirect_energy = 0.2
-shadow_enabled = true
-spot_range = 186.456
-spot_attenuation = 2.82843
-spot_angle = 40.0
-spot_angle_attenuation = 3.0
-
-[node name="OmniLight" type="OmniLight" parent="Head"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.461659 )
-visible = false
-omni_range = 0.999468
-omni_attenuation = 2.63902
-
 [node name="Camera" type="Camera" parent="Head"]
 doppler_tracking = 2
 near = 0.1

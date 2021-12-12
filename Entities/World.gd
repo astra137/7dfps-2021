@@ -4,8 +4,8 @@ export(int) var maximum_score := 5000
 
 onready var post_round_timer: Timer = $PostRoundTimer
 onready var round_timer: Timer = $RoundTimer
-onready var score_board := $GameUI/ScoreboardBackground
-onready var victor_area := $GameUI/ScoreboardBackground/ScoreboardMargin/Scoreboard/VictorArea
+onready var score_board := $GameUI/Margin/ScoreboardBackground
+onready var victor_area := $GameUI/Margin/ScoreboardBackground/ScoreboardMargin/Scoreboard/VictorArea
 
 var rng := RandomNumberGenerator.new()
 remotesync var player_scores := []
@@ -84,7 +84,7 @@ func _on_PostRoundTimer_timeout():
 		round_timer.start()
 		rpc("time_left", round_timer.time_left)
 	
-puppet func time_left(time_left: float):
+remotesync func time_left(time_left: float):
 	var wait_time = round_timer.wait_time
 	round_timer.start(time_left)
 	round_timer.wait_time = wait_time

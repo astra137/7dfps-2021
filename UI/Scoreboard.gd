@@ -18,7 +18,7 @@ class PlayerScoreSorter:
 
 
 
-func _process(delta):
+func _process(_delta):
 # Uncomment for a live scoreboard
 #	if time_left <= 0.0:
 #		update_scores()

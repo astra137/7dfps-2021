@@ -50,8 +50,6 @@ puppetsync func player_join(player_id: int, pos: Vector3, vel: Vector3):
 	world.get_node("Players").add_child(player)
 	player.post_player_join(player_id, pos, vel)
 	players.append(player_id)
-	if not world.is_network_master():
-		world.rpc_id(player_id, "time_left", world.get_node("RoundTimer").time_left)
 
 
 puppetsync func player_leave(player_id: int):
@@ -82,6 +80,7 @@ func _network_peer_connected(id):
 		for player_id in players:
 			var player_node = Helpers.get_player_node_by_id(player_id)
 			rpc_id(id, "player_join", player_id, player_node._position, player_node._velocity)
+			world.rpc("time_left", world.get_node("RoundTimer").time_left)
 
 		# Assume new peers want to play
 		var spawn_points = world.get_node("SpawnPoints").get_children()

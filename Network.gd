@@ -33,6 +33,7 @@ func join_game(address: String):
 	multiplayer.set_network_peer(peer)
 	world = world_scene.instance()
 	get_tree().get_root().add_child(world)
+	
 
 
 func quit_game():
@@ -80,9 +81,13 @@ func _network_peer_connected(id):
 		# Send existing players to new one
 		for player_id in players:
 			var player_node = Helpers.get_player_node_by_id(player_id)
-			rpc_id(id, "player_join", player_id, player_node._position, player_node._velocity, player_node.color)
-			world.rpc("time_left", world.get_node("RoundTimer").time_left)
-
+			rpc_id(id, "player_join", player_id, player_node._position, player_node._velocity, player_node.player_color)
+		
+		world.rpc("time_left", world.get_node("RoundTimer").time_left)
+		var gears := get_tree().get_nodes_in_group("gear")
+		for gear in gears:
+			gear.rpc("sync_rotation", gear.get_node("gear").transform)
+		
 		# Assume new peers want to play
 		var spawn_points = world.get_node("SpawnPoints").get_children()
 		var at = spawn_points[rng.randi_range(0, spawn_points.size() - 1)].transform.origin

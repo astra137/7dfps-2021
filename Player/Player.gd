@@ -36,7 +36,7 @@ var staring_at := []
 var stared_by := []
 
 puppetsync var score := 0
-remotesync var color: Color = Color.from_hsv(1.0, 1.0, 1.0, 1.0)
+remotesync var player_color: Color = Color.from_hsv(1.0, 1.0, 1.0, 1.0)
 
 onready var control := $Control
 onready var camera: Camera = $Head/Camera
@@ -77,7 +77,7 @@ puppetsync func set_real_kinematics(pos: Vector3, vel: Vector3):
 	_velocity = vel;
 
 remotesync func set_color(color: Color):
-	rset("color", color)
+	rset("player_color", color)
 	# setting outline hue
 	for i in range(proob_body.get_surface_material_count()):
 		var material = proob_body.get_surface_material(i)

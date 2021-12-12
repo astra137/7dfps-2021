@@ -27,62 +27,61 @@ script = ExtResource( 3 )
 
 [node name="map" parent="Static" instance=ExtResource( 1 )]
 
+[node name="gear2" parent="Static" instance=ExtResource( 4 )]
+transform = Transform( 1.55227, 1.25971, -0.060023, 0.226858, -0.372548, -1.95186, -1.24056, 1.50809, -0.432036, -30.5881, -13.938, -16.6046 )
+
+[node name="gear3" parent="Static" instance=ExtResource( 4 )]
+transform = Transform( 1.51742, 1.07886, 0.730406, 0.791923, 0.126565, -1.83217, -1.03455, 1.6793, -0.331161, -37.0353, -22.2759, -26.1623 )
+rot = -0.5
+
+[node name="cup" parent="Static" instance=ExtResource( 6 )]
+transform = Transform( -0.308781, 0.631497, -0.71124, -0.898356, -0.439265, 7.45058e-09, -0.312423, 0.638948, 0.702948, -35.4897, 14.819, -16.5796 )
+
+[node name="cup2" parent="Static" instance=ExtResource( 6 )]
+transform = Transform( 0.239432, 0.968442, -0.0692147, -0.970105, 0.235718, -0.0577272, -0.0395896, 0.0809672, 0.995932, -0.728065, -17.1373, -43.9543 )
+
+[node name="cup3" parent="Static" instance=ExtResource( 6 )]
+transform = Transform( -0.403723, -0.140499, 0.90403, 0.743908, -0.625606, 0.234989, 0.532548, 0.767384, 0.357091, 8.45878, -16.6265, -52.7288 )
+
+[node name="crate17" parent="Static" instance=ExtResource( 7 )]
+transform = Transform( 6.00824, 3.68532, -3.7841, -2.06634, -3.63459, -6.82056, -4.8612, 6.09984, -1.7778, 16.2868, -11.1925, -2.56418 )
+
+[node name="crate23" parent="Static" instance=ExtResource( 7 )]
+transform = Transform( -2.762, 2.09328, -1.99738, -2.86941, -1.62737, 2.26234, 0.371308, 2.99497, 2.62532, -47.1408, -24.8424, 17.2584 )
+
+[node name="crate24" parent="Static" instance=ExtResource( 7 )]
+transform = Transform( -2.762, 2.09328, -1.99738, -2.86941, -1.62737, 2.26234, 0.371308, 2.99497, 2.62532, -38.41, -15.1223, -84.4153 )
+
+[node name="crate25" parent="Static" instance=ExtResource( 7 )]
+transform = Transform( 1.23122, 0.949849, -1.25773, -1.56513, 0.924837, -0.833698, 0.185654, 1.49748, 1.31266, -18.191, -20.6167, -90.5605 )
+
+[node name="crate26" parent="Static" instance=ExtResource( 7 )]
+transform = Transform( 1.77416, 0.0415493, 0.92231, -0.0197956, 1.99923, -0.0519884, -0.923036, 0.036987, 1.77388, -18.191, -3.56616, -90.5605 )
+
+[node name="crate27" parent="Static" instance=ExtResource( 7 )]
+transform = Transform( -0.272163, -1.31536, 1.48181, 1.1338, 1.12326, 1.20532, -1.62495, 1.00406, 0.592816, 28.2576, -3.56616, -100.357 )
+
+[node name="crate28" parent="Static" instance=ExtResource( 7 )]
+transform = Transform( 1.79506, -0.712601, -0.519597, 0.288531, -0.638964, 1.8731, -0.833388, -1.75611, -0.470684, -5.88112, 11.6332, -100.357 )
+
+[node name="crate18" parent="Static" instance=ExtResource( 7 )]
+transform = Transform( -0.960566, -0.103578, -1.75117, -1.51833, -0.950888, 0.889093, -0.878628, 1.75644, 0.378064, 26.3235, -31.0682, -36.1325 )
+
+[node name="crate19" parent="Static" instance=ExtResource( 7 )]
+transform = Transform( -0.972864, 1.45745, -3.59575, -3.14129, 1.87993, 1.6119, 2.27725, 3.21585, 0.687336, 45.6063, -29.9141, -12.6482 )
+
+[node name="crate22" parent="Static" instance=ExtResource( 7 )]
+transform = Transform( 2.89223, 2.5786, 0.992888, -1.5269, 0.293551, 3.68543, 2.30295, -3.0438, 1.19657, 45.6063, -29.9141, -50.2822 )
+
+[node name="crate20" parent="Static" instance=ExtResource( 7 )]
+transform = Transform( -0.880981, 2.90528, -2.60447, 0.412748, 2.72444, 2.8995, 3.87989, 0.369848, -0.899832, 2.84813, -23.0493, -32.2919 )
+
+[node name="crate21" parent="Static" instance=ExtResource( 7 )]
+transform = Transform( -0.0843436, 3.81362, 1.20382, 0.969215, -1.1487, 3.70691, 3.87989, 0.369848, -0.899832, -14.4449, -24.8104, 1.49174 )
+
 [node name="gear" parent="Static" instance=ExtResource( 4 )]
 transform = Transform( 3.98505, 0.345563, 0, -0.345563, 3.98505, 0, 0, 0, 4, 17.2799, -38.0732, -17.1185 )
-
-[node name="gear2" parent="Static/gear" instance=ExtResource( 4 )]
-transform = Transform( 0.381717, 0.321796, 0.0272059, 0.0900278, -0.0655819, -0.487436, -0.31014, 0.377023, -0.108009, -12.4435, 4.9774, 0.128475 )
-
-[node name="gear3" parent="Static/gear" instance=ExtResource( 4 )]
-transform = Transform( 0.360833, 0.265973, 0.221489, 0.230013, 0.0548237, -0.440554, -0.258637, 0.419825, -0.0827902, -13.8692, 2.76148, -2.26095 )
-
-[node name="gear4" parent="Static/gear" instance=ExtResource( 4 )]
-transform = Transform( 0.360833, 0.265973, 0.221489, 0.230013, 0.0548237, -0.440554, -0.258637, 0.419825, -0.0827902, -13.8692, 2.76148, -2.26095 )
-
-[node name="cup" parent="Static/gear" instance=ExtResource( 6 )]
-transform = Transform( -0.0575042, 0.166771, -0.177145, -0.230418, -0.0957667, -0.0153611, -0.0781057, 0.159737, 0.175737, -14.2854, 12.0339, 0.134725 )
-
-[node name="cup2" parent="Static/gear" instance=ExtResource( 6 )]
-transform = Transform( 0.080586, 0.236114, -0.0159922, -0.236448, 0.0796251, -0.0158727, -0.00989741, 0.0202418, 0.248983, -4.93732, 4.82547, -6.70895 )
-
-[node name="cup3" parent="Static/gear" instance=ExtResource( 6 )]
-transform = Transform( -0.11662, -0.0214818, 0.220087, 0.176562, -0.158851, 0.0780524, 0.133137, 0.191846, 0.0892727, -2.66023, 5.1511, -8.90257 )
-
-[node name="crate17" parent="Static/gear" instance=ExtResource( 7 )]
-transform = Transform( 1.54107, 0.996383, -0.79518, -0.384889, -0.825655, -1.78049, -1.2153, 1.52496, -0.444449, -0.827901, 6.67359, 3.63858 )
-
-[node name="crate23" parent="Static/gear" instance=ExtResource( 7 )]
-transform = Transform( -0.625946, 0.556511, -0.54634, -0.774322, -0.360112, 0.520332, 0.0928269, 0.748742, 0.656329, -16.3307, 1.90399, 8.59422 )
-
-[node name="crate24" parent="Static/gear" instance=ExtResource( 7 )]
-transform = Transform( -0.625946, 0.556511, -0.54634, -0.774322, -0.360112, 0.520332, 0.0928269, 0.748742, 0.656329, -14.3661, 4.5135, -16.8242 )
-
-[node name="crate25" parent="Static/gear" instance=ExtResource( 7 )]
-transform = Transform( 0.340458, 0.2166, -0.295251, -0.363228, 0.250859, -0.234809, 0.0464135, 0.374371, 0.328165, -9.21157, 3.58171, -18.3605 )
-
-[node name="crate26" parent="Static/gear" instance=ExtResource( 7 )]
-transform = Transform( 0.442308, -0.0328301, 0.230838, 0.0333872, 0.498835, 0.00697123, -0.230759, 0.00924675, 0.44347, -9.57983, 7.82841, -18.3605 )
-
-[node name="crate27" parent="Static/gear" instance=ExtResource( 7 )]
-transform = Transform( -0.0922735, -0.351869, 0.343036, 0.276511, 0.251356, 0.332207, -0.406237, 0.251014, 0.148204, 1.98889, 8.83159, -20.8097 )
-
-[node name="crate28" parent="Static/gear" instance=ExtResource( 7 )]
-transform = Transform( 0.440855, -0.163684, -0.169868, 0.110632, -0.174534, 0.455301, -0.208347, -0.439028, -0.117671, -6.84214, 11.8799, -20.8097 )
-
-[node name="crate18" parent="Static/gear" instance=ExtResource( 7 )]
-transform = Transform( -0.206451, -0.00526069, -0.455357, -0.39891, -0.23907, 0.183621, -0.219657, 0.43911, 0.0945161, 2.10115, 1.94002, -4.75349 )
-
-[node name="crate19" parent="Static/gear" instance=ExtResource( 7 )]
-transform = Transform( -0.174462, 0.322398, -0.930389, -0.803397, 0.499703, 0.323807, 0.569313, 0.803963, 0.171834, 6.8789, 2.64394, 1.11757 )
-
-[node name="crate22" parent="Static/gear" instance=ExtResource( 7 )]
-transform = Transform( 0.753332, 0.635899, 0.167697, -0.317833, 0.128805, 0.939357, 0.575737, -0.760949, 0.299143, 6.8789, 2.64394, -8.29092 )
-
-[node name="crate20" parent="Static/gear" instance=ExtResource( 7 )]
-transform = Transform( -0.228336, 0.664762, -0.711305, 0.0837739, 0.74131, 0.665913, 0.969972, 0.0924621, -0.224958, -3.91893, 3.43023, -3.79335 )
-
-[node name="crate21" parent="Static/gear" instance=ExtResource( 7 )]
-transform = Transform( -0.0419398, 0.974649, 0.21977, 0.239576, -0.203736, 0.949261, 0.969972, 0.0924621, -0.224958, -8.18798, 2.61812, 4.65256 )
+rot = 0.1
 
 [node name="angel" parent="Static" instance=ExtResource( 5 )]
 transform = Transform( 0.366025, -0.366025, 1.93185, 1.01247, 1.71958, 0.133975, -1.6855, 0.953454, 0.5, 14, -22, 49.5713 )

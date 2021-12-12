@@ -45,6 +45,8 @@ onready var score_board := get_tree().get_root().get_node("World/GameUI/Margin/S
 onready var victor_area := get_tree().get_root().get_node("World/GameUI/Margin/ScoreboardBackground/ScoreboardMargin/Scoreboard/VictorArea")
 onready var stare_timer: Timer = $StareTimer
 onready var vignette: TextureRect = get_tree().get_root().get_node("World/GameUI/Vignette")
+onready var proob_body: MeshInstance = $Head/proob/body
+onready var proob_engine: MeshInstance = $Head/proob/engine
 
 
 
@@ -152,6 +154,7 @@ func process_stare(delta):
 		if staring_at_temp.has(player): # self is staring at player
 			if not player.stared_by.has(self): # player doesn't know yet
 				player.stared_by.append(self)
+				player.rpc_id(Helpers.get_player_id(self), "apply_outline")
 				if not stared_by.has(player): # player is NOT looking at self
 					self.rpc("cue_lock", Helpers.get_player_id(player), true)
 				else: # other player is looking at self
@@ -159,6 +162,7 @@ func process_stare(delta):
 
 		else: # self is NOT looking at player
 			if player.stared_by.has(self): # player doesn't know yet
+				player.rpc_id(Helpers.get_player_id(self), "remove_outline")
 				player.stared_by.erase(self)
 				if not stared_by.has(player): # player is NOT looking at self
 					self.rpc("cue_lock", Helpers.get_player_id(player), false)
@@ -168,7 +172,6 @@ func process_stare(delta):
 
 	# Setting the values for who we're staring at
 	staring_at = [] + staring_at_temp
-
 	for player in stared_by:
 		if staring_at_temp.has(player):
 			staring_at_temp.erase(player)
@@ -188,16 +191,16 @@ func process_stare(delta):
 				state = PlayerState.IDLE
 				print("Idle")
 	
+	# Finding out who we're being stared by
 	var stared_by_temp = [] + stared_by
-
 	for player in staring_at:
 		if stared_by_temp.has(player):
 			stared_by_temp.erase(player)
-
+			
 	if stared_by_temp.empty():
-		rpc_id(int(name), "remove_vignette")			
+		rpc_id(Helpers.get_player_id(self), "remove_vignette")			
 	else:
-		rpc_id(int(name), "apply_vignette", delta)
+		rpc_id(Helpers.get_player_id(self), "apply_vignette", delta)
 
 
 
@@ -261,7 +264,6 @@ puppetsync func round_ended(victor: String):
 puppetsync func apply_vignette(delta: float):
 	vignette.visible = true
 	var new_opacity = clamp(vignette.modulate.a + (delta * (max_vignette_opacity / stare_timer.wait_time)), 0.0, max_vignette_opacity)
-	print(vignette.modulate.a, new_opacity)
 	vignette.set_modulate(Color.from_hsv(1.0, 1.0, 1.0, new_opacity))
 
 
@@ -269,3 +271,31 @@ puppetsync func apply_vignette(delta: float):
 puppetsync func remove_vignette():
 	vignette.visible = false
 	vignette.modulate = Color.from_hsv(1.0, 1.0, 1.0, 0.0)
+
+
+puppetsync func apply_outline():
+	for i in range(proob_body.get_surface_material_count()):
+		var material = proob_body.get_surface_material(i)
+		if material != null and material.next_pass != null: # check if a next_pass is attached
+			material.next_pass.set_shader_param("enable", true) # apply new value for "enable"
+#			proob_body.get_surface_material(i).next_pass.set_shader_param("color", Vector4()) # apply new value for "enable"
+			
+	for i in range(proob_engine.get_surface_material_count()):
+		var material = proob_engine.get_surface_material(i)
+		if material != null and material.next_pass != null: # check if a next_pass is attached
+			material.next_pass.set_shader_param("enable", true) # apply new value for "enable"
+#			proob_engine.get_surface_material(i).next_pass.set_shader_param("color", Vector4()) # apply new value for "enable"
+	
+puppetsync func remove_outline():
+	for i in range(proob_body.get_surface_material_count()):
+		var material = proob_body.get_surface_material(i)
+		if material != null and material.next_pass != null: # check if a next_pass is attached
+			material.next_pass.set_shader_param("enable", false) # apply new value for "enable"
+#			proob_body.get_surface_material(i).next_pass.set_shader_param("color", Vector4()) # apply new value for "enable"
+			
+	for i in range(proob_engine.get_surface_material_count()):
+		var material = proob_engine.get_surface_material(i)
+		if material != null and material.next_pass != null: # check if a next_pass is attached
+			material.next_pass.set_shader_param("enable", false) # apply new value for "enable"
+#			proob_engine.get_surface_material(i).next_pass.set_shader_param("color", Vector4()) # apply new value for "enable"
+	

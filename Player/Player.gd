@@ -36,6 +36,7 @@ var staring_at := []
 var stared_by := []
 
 puppetsync var score := 0
+remotesync var color: Color = Color.from_hsv(1.0, 1.0, 1.0, 1.0)
 
 onready var control := $Control
 onready var camera: Camera = $Head/Camera
@@ -74,14 +75,19 @@ puppetsync func set_real_kinematics(pos: Vector3, vel: Vector3):
 	_position = pos;
 	_velocity = vel;
 
-
-func _ready():
-	# Choose a random color for the player
-	var rng = RandomNumberGenerator.new()
-	rng.randomize()
-#	var hue = rng.randf_range(0, 1.0)
-#	spotlight.light_color = Color.from_hsv(hue, 1.0, 1.0, 1.0)
-#	omnilight.light_color = Color.from_hsv(hue, 1.0, 1.0, 1.0)
+remotesync func set_color(color: Color):
+	rset("color", color)
+	# setting outline hue
+	for i in range(proob_body.get_surface_material_count()):
+		var material = proob_body.get_surface_material(i)
+		if material != null and material.next_pass != null: # check if a next_pass is attached
+			material.next_pass.set_shader_param("color", color) # apply new value for "enable"
+			
+	for i in range(proob_engine.get_surface_material_count()):
+		var material = proob_engine.get_surface_material(i)
+		if material != null and material.next_pass != null: # check if a next_pass is attached
+			material.next_pass.set_shader_param("color", color) # apply new value for "enable"
+	
 
 
 func _process(delta):
@@ -278,24 +284,20 @@ puppetsync func apply_outline():
 		var material = proob_body.get_surface_material(i)
 		if material != null and material.next_pass != null: # check if a next_pass is attached
 			material.next_pass.set_shader_param("enable", true) # apply new value for "enable"
-#			proob_body.get_surface_material(i).next_pass.set_shader_param("color", Vector4()) # apply new value for "enable"
 			
 	for i in range(proob_engine.get_surface_material_count()):
 		var material = proob_engine.get_surface_material(i)
 		if material != null and material.next_pass != null: # check if a next_pass is attached
 			material.next_pass.set_shader_param("enable", true) # apply new value for "enable"
-#			proob_engine.get_surface_material(i).next_pass.set_shader_param("color", Vector4()) # apply new value for "enable"
 	
 puppetsync func remove_outline():
 	for i in range(proob_body.get_surface_material_count()):
 		var material = proob_body.get_surface_material(i)
 		if material != null and material.next_pass != null: # check if a next_pass is attached
 			material.next_pass.set_shader_param("enable", false) # apply new value for "enable"
-#			proob_body.get_surface_material(i).next_pass.set_shader_param("color", Vector4()) # apply new value for "enable"
 			
 	for i in range(proob_engine.get_surface_material_count()):
 		var material = proob_engine.get_surface_material(i)
 		if material != null and material.next_pass != null: # check if a next_pass is attached
 			material.next_pass.set_shader_param("enable", false) # apply new value for "enable"
-#			proob_engine.get_surface_material(i).next_pass.set_shader_param("color", Vector4()) # apply new value for "enable"
 	

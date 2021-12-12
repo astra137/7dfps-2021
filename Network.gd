@@ -44,12 +44,13 @@ func quit_game():
 	emit_signal("disconnected", "")
 
 
-puppetsync func player_join(player_id: int, pos: Vector3, vel: Vector3):
+puppetsync func player_join(player_id: int, pos: Vector3, vel: Vector3, color: Color):
 	print("player_join:", player_id)
 	var player: Player = player_scene.instance()
 	world.get_node("Players").add_child(player)
 	player.post_player_join(player_id, pos, vel)
 	players.append(player_id)
+	player.set_color(color)
 
 
 puppetsync func player_leave(player_id: int):
@@ -79,13 +80,14 @@ func _network_peer_connected(id):
 		# Send existing players to new one
 		for player_id in players:
 			var player_node = Helpers.get_player_node_by_id(player_id)
-			rpc_id(id, "player_join", player_id, player_node._position, player_node._velocity)
+			rpc_id(id, "player_join", player_id, player_node._position, player_node._velocity, player_node.color)
 			world.rpc("time_left", world.get_node("RoundTimer").time_left)
 
 		# Assume new peers want to play
 		var spawn_points = world.get_node("SpawnPoints").get_children()
 		var at = spawn_points[rng.randi_range(0, spawn_points.size() - 1)].transform.origin
-		rpc("player_join", id, at, Vector3.ZERO)
+		var color := Color.from_hsv(rng.randf_range(0, 1.0), 45.0 / 100.0, 80.0 / 100.0, 1.0)
+		rpc("player_join", id, at, Vector3.ZERO, color)
 
 
 func _network_peer_disconnected(id):

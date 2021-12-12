@@ -200,7 +200,7 @@ far = 8192.0
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 8 )
-volume_db = -10.0
+volume_db = -13.0
 autoplay = true
 
 [connection signal="timeout" from="PostRoundTimer" to="." method="_on_PostRoundTimer_timeout"]

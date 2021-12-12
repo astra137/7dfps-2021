@@ -48,6 +48,7 @@ onready var stare_timer: Timer = $StareTimer
 onready var vignette: TextureRect = get_tree().get_root().get_node("World/GameUI/Vignette")
 onready var proob_body: MeshInstance = $Head/proob/body
 onready var proob_engine: MeshInstance = $Head/proob/engine
+onready var proob_orb: MeshInstance = $Head/proob/body/orb/Sphere
 
 
 
@@ -88,6 +89,10 @@ remotesync func set_color(color: Color):
 		if material != null and material.next_pass != null: # check if a next_pass is attached
 			material.next_pass.set_shader_param("color", color) # apply new value for "enable"
 	
+	for i in range(proob_orb.get_surface_material_count()):
+		var material: SpatialMaterial = proob_orb.get_surface_material(i)
+		if material != null:
+			material.emission = color
 
 
 func _process(delta):

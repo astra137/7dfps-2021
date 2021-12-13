@@ -16,8 +16,12 @@ var rng := RandomNumberGenerator.new()
 
 func host_game(local_player: bool):
 	print("host_game:", local_player)
-	peer = NetworkedMultiplayerENet.new()
-	var ok = peer.create_server(DEFAULT_PORT, MAX_PEERS)
+#	peer = NetworkedMultiplayerENet.new()
+	peer = WebSocketServer.new()
+	
+#	var ok = peer.create_server(DEFAULT_PORT, MAX_PEERS)
+	var ok = peer.listen(DEFAULT_PORT, PoolStringArray(), true)
+
 	if ok != OK: return get_tree().quit(1);
 	multiplayer.set_network_peer(peer)
 	world = world_scene.instance()
@@ -27,8 +31,12 @@ func host_game(local_player: bool):
 
 func join_game(address: String):
 	print("join_game:", address)
-	peer = NetworkedMultiplayerENet.new()
-	var ok = peer.create_client(address, DEFAULT_PORT)
+#	peer = NetworkedMultiplayerENet.new()
+	peer = WebSocketClient.new()
+
+	var url = "ws://" + address + ":" + str(DEFAULT_PORT)
+	var ok = peer.connect_to_url(url, PoolStringArray(), true)
+#	var ok = peer.create_client(address, DEFAULT_PORT)
 	if ok != OK: return get_tree().quit(1);
 	multiplayer.set_network_peer(peer)
 	world = world_scene.instance()
